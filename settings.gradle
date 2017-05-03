@@ -1,0 +1,1 @@
+include ':app', ':bn-payment', ':bn-test-resources'

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bn_black">#000</color>
+    <color name="bn_grey">#4f5355</color>
+    <color name="bn_light_grey">#c7c7cd</color>
+    <color name="bn_lighter_grey">#dcddde</color>
+    <color name="bn_dark_purple">#563e79</color>
+    <color name="bn_purple">#664a90</color>
+    <color name="bn_light_purple">#b2a4c7</color>
+    <color name="bn_red">#ff0000</color>
+</resources>

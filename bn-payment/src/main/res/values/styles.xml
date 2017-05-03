@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="BN" />
+
+    <style name="BN.HeaderText">
+        <item name="android:textSize">15dp</item>
+        <item name="android:textColor">@color/bn_grey</item>
+    </style>
+
+    <style name="BN.EditText">
+        <item name="android:padding">12dp</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:textColor">@color/bn_black</item>
+        <item name="android:textColorHint">@color/bn_light_grey</item>
+    </style>
+    <style name="BN.EditText.CardForm" />
+</resources>

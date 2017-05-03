@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CreditCardRegistrationWebView">
+        <attr name="css_url" format="string" />
+        <attr name="card_number_hint" format="string" />
+        <attr name="card_expiry_hint" format="string" />
+        <attr name="card_cvv_hint" format="string" />
+        <attr name="submit_button_text" format="string" />
+    </declare-styleable>
+</resources>

@@ -1,0 +1,14 @@
+{
+    "Username": "bn-secure.rest.api.dev",
+    "Password": "MobileIsGr8",
+    "TokenisationAlgorithmId": 2,
+    "CustomerStorageNumber": "",
+    "AccountNumber": "2345678",
+    "MerchantNumber": "",
+    "CustNumber": "58748579",
+    "TrnType": 1,
+    "CustRef" : "test-ud-002",
+    "UserDefined": {
+        "reference1": "abc123"
+    }
+}
