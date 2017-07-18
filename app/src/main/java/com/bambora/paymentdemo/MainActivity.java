@@ -23,6 +23,7 @@
 package com.bambora.paymentdemo;
 
 import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -59,7 +60,9 @@ public class MainActivity extends AppCompatActivity {
      * Please replace this with your own merchant number after signing up with Bambora.
      */
 
-    private static final String MERCHANT_ACCOUNT = "CF3A111E-CB1A-4B98-814B-250EC4FD71E5";
+    private DeviceStorage storage;
+    final Context context = this;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,11 +71,37 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
-        String url = "https://uat.ippayments.com.au/rapi/";// "https://devsandbox.ippayments.com.au/rapi/";
+        storage = new DeviceStorage(context);
+        String currentEnvironment = storage.getEnvironmentNameFromStorage();
+        if (currentEnvironment == null || currentEnvironment.isEmpty() ||
+                (!currentEnvironment.equals("DEV") && !currentEnvironment.equals("UAT") && !currentEnvironment.equals("PROD"))) {
+            // environment has not been set, so default to DEV
+            currentEnvironment = "DEV";
+        }
+        String currentMerchantIdKeyName = getString(R.string.MERCHANT_ID_DEV_NAME);
+        String url = "https://devsandbox.ippayments.com.au/rapi/";
+        switch (currentEnvironment) {
+            case "DEV":
+                currentMerchantIdKeyName = getString(R.string.MERCHANT_ID_DEV_NAME);
+                url = "https://devsandbox.ippayments.com.au/rapi/";
+                break;
+            case "UAT":
+                currentMerchantIdKeyName = getString(R.string.MERCHANT_ID_UAT_NAME);
+                url = "https://uat.ippayments.com.au/rapi/";
+                break;
+            case "PROD":
+                currentMerchantIdKeyName = getString(R.string.MERCHANT_ID_PROD_NAME);
+                url = "https://www.ippayments.com.au/rapi/";
+                break;
+        }
+        String readMerchantID = storage.getMerchantIdFromStorage(currentMerchantIdKeyName);
+        if (readMerchantID == null || readMerchantID.isEmpty()) {
+            BNLog.e(getClass().getSimpleName(), "There was an error getting the Merchant ID");
+        }
 
         // Setup BNPaymentHandler
         BNPaymentBuilder paymentBuilder = new BNPaymentBuilder(getApplicationContext())
-                .merchantAccount(MERCHANT_ACCOUNT)
+                .merchantAccount(readMerchantID)
                 .debug(true)
                 .baseUrl(url);
 
@@ -80,9 +109,13 @@ public class MainActivity extends AppCompatActivity {
 
         // ADD the JSON registration custom data
         {
-            JSONObject registrationJsonData = readJsonFrom("dataRegistration.json");
-            Log.i(getClass().getSimpleName(), registrationJsonData.toString());
-            BNPaymentHandler.getInstance().setRegistrationJsonData(registrationJsonData);
+            JSONObject registrationJsonData = getJsonRegData();
+            if (registrationJsonData != null) {
+                Log.i(getClass().getSimpleName(), registrationJsonData.toString());
+                BNPaymentHandler.getInstance().setRegistrationJsonData(registrationJsonData);
+            } else {
+                BNLog.e(getClass().getSimpleName(), "The registration data is not set and must be entered before using the app");
+            }
         }
         setupView();
     }
@@ -120,6 +153,9 @@ public class MainActivity extends AppCompatActivity {
 
         Button listCreditCardsButton = (Button) findViewById(R.id.list_credit_cards_button);
         listCreditCardsButton.setOnClickListener(mListCreditCardsListener);
+
+        Button developerPageButton = (Button) findViewById(R.id.developer_button);
+        developerPageButton.setOnClickListener(mDeveloperButtonListener);
     }
 
     private void showHostedPaymentPage() {
@@ -141,11 +177,11 @@ public class MainActivity extends AppCompatActivity {
         paymentSettings.currency = "AUD";
         paymentSettings.cvcCode =  "123";
 
-        JSONObject paymentJsonData = readJsonFrom("dataPayment.json");
+        JSONObject paymentJsonData = getJsonPayData();
         Log.i(getClass().getSimpleName(), paymentJsonData.toString());
         paymentSettings.paymentJsonData = paymentJsonData;
 
-        BNPaymentHandler.getInstance().makeTransactionExt(paymentId, paymentSettings, new ITransactionExtListener() {
+        BNPaymentHandler.getInstance().submitSinglePaymentToken(paymentId, paymentSettings, new ITransactionExtListener() {
             @Override
             public void onTransactionSuccess(Map<String, String> responseDictionary) {
                 String receipt = responseDictionary.get("receipt");
@@ -228,27 +264,48 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private String loadJSONFromAsset(String name) {
-        String json = null;
-        try {
-            InputStream is = getAssets().open(name);
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            json = new String(buffer, "UTF-8");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        return json;
+    private void showDeveloperPage() {
+        Intent intent = new Intent(this, DeveloperActivity.class);
+        startActivity(intent);
     }
 
-    private JSONObject readJsonFrom(String name)
+    Button.OnClickListener mDeveloperButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            showDeveloperPage();
+        }
+     };
+
+    /**
+     * The registration data as a JSON object.
+     * @return the json object
+     */
+    private JSONObject getJsonRegData()
     {
         try {
-            JSONObject obj = new JSONObject(loadJSONFromAsset(name));
-            return obj;
+            String data = storage.getRegDataFromStorage();
+            if (!data.equals("")) {
+                JSONObject obj = new JSONObject(data);
+                return obj;
+            }
+        } catch (JSONException e) {
+            BNLog.jsonParseError(getClass().getSimpleName(), e);
+        }
+        return null;
+    }
+
+    /**
+     * The payment data as a JSON object.
+     * @return the json object
+     */
+    private JSONObject getJsonPayData()
+    {
+        try {
+            String data = storage.getPayDataFromStorage();
+            if (!data.equals("")) {
+                JSONObject obj = new JSONObject(data);
+                return obj;
+            }
         } catch (JSONException e) {
             BNLog.jsonParseError(getClass().getSimpleName(), e);
         }

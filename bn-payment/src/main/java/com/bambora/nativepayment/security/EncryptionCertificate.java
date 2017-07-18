@@ -113,9 +113,10 @@ public class EncryptionCertificate implements Serializable {
                 certificateToVerify.verify(masterCertificate.getPublicKey());
                 return true;
             } catch (Exception e) {
-                BNLog.w(getClass().getSimpleName(), "Certificate is not trusted.", e);
+                // BNLog.w(getClass().getSimpleName(), "Certificate is not trusted.", e);
             }
         }
+        BNLog.d(getClass().getSimpleName(), "No trusted certificate could be found");
         return false;
     }
 

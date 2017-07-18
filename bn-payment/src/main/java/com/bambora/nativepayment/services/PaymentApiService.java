@@ -183,6 +183,7 @@ public class PaymentApiService extends ApiService {
             return request;
         }
 
+        // The following is deprecated due to name change. It should no longer be used and will be made private in future.
         public static Request makeTransactionExt(String paymentId, PaymentSettings paymentSettings, final ITransactionExtListener listener) {
             Request<TransactionResponse> request = createService().makeTransaction(paymentId, paymentSettings);
             request.execute(new Callback<TransactionResponse>() {
@@ -207,6 +208,17 @@ public class PaymentApiService extends ApiService {
                 }
             });
             return request;
+        }
+
+        /**
+         * This method is used for making a transaction with a token.
+         *
+         * @param paymentId a unique ID used to identify and search for transactions at a later time
+         * @param paymentSettings {@link PaymentSettings} containing transaction details.
+         * @param listener Result listener.
+         */
+        public static Request submitSinglePaymentToken(String paymentId, PaymentSettings paymentSettings, final ITransactionExtListener listener) {
+            return makeTransactionExt(paymentId, paymentSettings, listener);
         }
     }
 }
