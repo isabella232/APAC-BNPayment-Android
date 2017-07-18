@@ -6,4 +6,12 @@
     <string name="title_activity_register_credit_card">Register Credit Card</string>
     <string name="title_activity_list_credit_cards">Credit Cards</string>
     <string name="title_activity_credit_card_details">Credit Card details</string>
+    <string name="title_developer_page">Developer Settings</string>
+    <string name="tab_payment">Payment</string>
+    <string name="tab_developer">Developer</string>
+    <string name="ok">\"OK\"</string>
+    <string name="cancel">Cancel</string>
+    <string name="MERCHANT_ID_DEV_NAME">MerchantIDDevStore</string>
+    <string name="MERCHANT_ID_UAT_NAME">MerchantIDUatStore</string>
+    <string name="MERCHANT_ID_PROD_NAME">MerchantIDProdStore</string>
 </resources>

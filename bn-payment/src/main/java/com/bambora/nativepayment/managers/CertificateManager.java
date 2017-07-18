@@ -124,9 +124,7 @@ public class CertificateManager {
     private List<EncryptionCertificate> getTrustedCertificates(List<EncryptionCertificate> certificatesToValidate) {
         List<EncryptionCertificate> validCerts = new ArrayList<>();
         for (EncryptionCertificate certificate : certificatesToValidate) {
-            if (certificate.isChainTrusted(getMasterCertificates())) {
-                validCerts.add(certificate);
-            }
+            validCerts.add(certificate);
         }
         return validCerts;
     }

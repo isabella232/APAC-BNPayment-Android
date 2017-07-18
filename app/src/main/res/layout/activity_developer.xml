@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.bambora.paymentdemo.DeveloperActivity"
+    tools:layout_editor_absoluteY="81dp"
+    tools:layout_editor_absoluteX="0dp">
+
+    <RadioGroup
+        android:layout_width="368dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:id="@+id/radioGroup"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="64dp"
+        android:layout_marginStart="16dp">
+
+        <RadioButton
+            android:id="@+id/devEnvBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Dev"
+            android:textColor="@color/bn_purple"
+            tools:layout_editor_absoluteX="42dp"
+            tools:layout_editor_absoluteY="351dp" />
+
+        <RadioButton
+            android:id="@+id/uatEnvBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="UAT"
+            android:textColor="@color/bn_purple"
+            tools:layout_editor_absoluteX="34dp"
+            tools:layout_editor_absoluteY="261dp" />
+
+        <RadioButton
+            android:id="@+id/prodEnvBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Prod"
+            android:textColor="@color/bn_purple"
+            tools:layout_editor_absoluteX="56dp"
+            tools:layout_editor_absoluteY="171dp" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="43dp"
+        android:text="Merchant ID"
+        android:textColor="@color/bn_purple"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup"
+        android:layout_marginStart="16dp" />
+
+    <EditText
+        android:id="@+id/merchantIDText"
+        android:layout_width="163dp"
+        android:layout_height="41dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="32dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:textColor="@color/bn_purple"
+        app:layout_constraintHorizontal_bias="0.323"
+        app:layout_constraintLeft_toRightOf="@+id/textView2"
+        app:layout_constraintRight_toLeftOf="@+id/button"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="88dp"
+        android:layout_height="48dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="32dp"
+        android:onClick="SaveMerchantIDClickHandler"
+        android:text="Save"
+        android:textColor="@color/bn_purple"
+        android:textSize="12sp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup"
+        android:layout_marginEnd="16dp" />
+
+    <TextView
+        android:id="@+id/RegistrationData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="16dp"
+        android:text="Registration Data"
+        android:textColor="@color/bn_purple"
+        app:layout_constraintBottom_toTopOf="@+id/regDataText"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="16dp" />
+
+    <EditText
+        android:id="@+id/regDataText"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="17dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/bn_lighter_grey"
+        android:ems="10"
+        android:inputType="textMultiLine"
+        android:textColor="@color/bn_purple"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/merchantIDText"
+        app:layout_constraintVertical_bias="0.358"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="17dp" />
+
+    <Button
+        android:id="@+id/RegSave"
+        android:layout_width="88dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginRight="15dp"
+        android:onClick="SaveRegDataClickHandler"
+        android:text="Save"
+        android:textColor="@color/bn_purple"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/regDataText"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginEnd="15dp" />
+
+    <TextView
+        android:id="@+id/PayData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:text="Payment Data"
+        android:textColor="@color/bn_purple"
+        app:layout_constraintBottom_toTopOf="@+id/payDataText"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="16dp" />
+
+    <EditText
+        android:id="@+id/payDataText"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="17dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/bn_lighter_grey"
+        android:ems="10"
+        android:inputType="textMultiLine"
+        android:textColor="@color/bn_purple"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.933"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/regDataText"
+        app:layout_constraintVertical_bias="0.823"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="17dp" />
+
+    <Button
+        android:id="@+id/PaySave"
+        android:layout_width="88dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginRight="16dp"
+        android:onClick="SavePayDataClickHandler"
+        android:text="Save"
+        android:textColor="@color/bn_purple"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/payDataText"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginEnd="16dp" />
+
+    <TextView
+        android:id="@+id/BuildLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Build ID"
+        android:textColor="@color/bn_purple"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/BuildInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Info"
+        android:textColor="@color/bn_purple"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/BuildLabel"
+        android:layout_marginLeft="32dp" />
+
+</android.support.constraint.ConstraintLayout>

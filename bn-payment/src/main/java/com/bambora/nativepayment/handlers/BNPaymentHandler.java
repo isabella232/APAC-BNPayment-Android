@@ -224,10 +224,16 @@ public class BNPaymentHandler {
      * @param paymentSettings   Specifies details of this transaction.
      * @param callBack          Transaction result callback.
      */
+    // The following is the original SDK version
     public Request makeTransaction(String paymentIdentifier, PaymentSettings paymentSettings, ITransactionListener callBack) {
         return PaymentService.makeTransaction(paymentIdentifier, paymentSettings, callBack);
     }
+    // The following is the modified version which is now deprecated due to name change. It should no longer be used and will be removed in future.
     public Request makeTransactionExt(String paymentIdentifier, PaymentSettings paymentSettings, ITransactionExtListener callBack) {
+        return PaymentService.makeTransactionExt(paymentIdentifier, paymentSettings, callBack);
+    }
+    // The following is the APAC supported version which is for payment with a token
+    public Request submitSinglePaymentToken(String paymentIdentifier, PaymentSettings paymentSettings, ITransactionExtListener callBack) {
         return PaymentService.makeTransactionExt(paymentIdentifier, paymentSettings, callBack);
     }
 
