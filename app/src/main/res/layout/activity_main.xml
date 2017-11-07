@@ -41,12 +41,36 @@
                         android:text="Native Card Registration" />
 
                     <Button
+                        android:id="@+id/submit_pre_auth_token_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:padding="10dp"
+                        android:text="Pre-Auth (Token)" />
+
+                    <Button
+                        android:id="@+id/submit_pre_auth_card_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:padding="10dp"
+                        android:text="Pre-Auth (Card)" />
+
+                    <Button
                         android:id="@+id/make_transaction_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:padding="10dp"
-                        android:text="Make transaction" />
+                        android:text="Pay (token)" />
+
+                    <Button
+                        android:id="@+id/make_transaction_card_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:padding="10dp"
+                        android:text="Pay (Card)" />
 
                     <Button
                         android:id="@+id/list_credit_cards_button"
@@ -63,6 +87,14 @@
                         android:layout_gravity="center_horizontal"
                         android:padding="10dp"
                         android:text="Developer Page" />
+
+                    <Button
+                        android:id="@+id/test_sdk_api_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:padding="10dp"
+                        android:text="Test SDK API" />
 
                 </LinearLayout>
 

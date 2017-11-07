@@ -22,12 +22,16 @@
 
 package com.bambora.nativepayment.services;
 
+import android.content.Context;
+
 import com.bambora.nativepayment.handlers.BNPaymentHandler;
 import com.bambora.nativepayment.interfaces.ICardRegistrationCallback;
 import com.bambora.nativepayment.interfaces.ITransactionExtListener;
 import com.bambora.nativepayment.interfaces.ITransactionListener;
 import com.bambora.nativepayment.logging.BNLog;
+import com.bambora.nativepayment.managers.CreditCardManager;
 import com.bambora.nativepayment.models.PaymentSettings;
+import com.bambora.nativepayment.models.PaymentType;
 import com.bambora.nativepayment.models.TransactionResponse;
 import com.bambora.nativepayment.models.creditcard.CreditCard;
 import com.bambora.nativepayment.models.creditcard.RegistrationFormError;
@@ -39,8 +43,10 @@ import com.bambora.nativepayment.network.Callback;
 import com.bambora.nativepayment.network.Request;
 import com.bambora.nativepayment.network.RequestError;
 import com.bambora.nativepayment.network.Response;
+import com.bambora.nativepayment.storage.TransactionFileStorage;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.bambora.nativepayment.network.RequestMethod.POST;
@@ -49,6 +55,7 @@ import static com.bambora.nativepayment.network.RequestMethod.POST;
  * An {@link ApiService} class for setting up credit card related API endpoints/requests.
  */
 public class PaymentApiService extends ApiService {
+
 
     /**
      * Creates a {@link Request} for initiating a hosted payment page to be used for registering
@@ -99,6 +106,7 @@ public class PaymentApiService extends ApiService {
      * Helper class for executing the API requests.
      */
     public static class PaymentService {
+        private static TransactionFileStorage transactionFileStorage =  new TransactionFileStorage();
 
         public static Request initiateHppRegistration(RegistrationFormSettings formSettings, final IHppResultListener resultListener) {
             Request<RegistrationResponse> request = createService().initiateHpp(formSettings);
@@ -183,8 +191,14 @@ public class PaymentApiService extends ApiService {
             return request;
         }
 
-        // The following is deprecated due to name change. It should no longer be used and will be made private in future.
-        public static Request makeTransactionExt(String paymentId, PaymentSettings paymentSettings, final ITransactionExtListener listener) {
+
+        /**
+         * Apac method for making a transaction by token.
+         *
+         * @param paymentSettings {@link PaymentSettings} containing transaction details.
+         * @param listener Result listener.
+         */
+        public static Request makeTransactionToken(String paymentId, final PaymentSettings paymentSettings, final ITransactionExtListener listener) {
             Request<TransactionResponse> request = createService().makeTransaction(paymentId, paymentSettings);
             request.execute(new Callback<TransactionResponse>() {
                 @Override
@@ -210,6 +224,52 @@ public class PaymentApiService extends ApiService {
             return request;
         }
 
+
+        /**
+         * Apac method for making a transaction by card.
+         *
+         * @param paymentSettings {@link PaymentSettings} containing transaction details.
+         * @param listener Result listener.
+         */
+        public static Request makeTransactionCard(final Context context, String paymentId, final PaymentSettings paymentSettings,
+                                                  final ITransactionExtListener listener, final CreditCardManager.IOnCreditCardSaved onSavedListener) {
+            Request<TransactionResponse> request = createService().makeTransaction(paymentId, paymentSettings);
+            request.execute(new Callback<TransactionResponse>() {
+                @Override
+                public void onSuccess(Response<TransactionResponse> response) {
+                    if (listener != null) {
+
+                        Map<String,String> responseMap = new HashMap<String,String>();
+                        TransactionResponse transactionResponse = response.getBody();
+                        if (transactionResponse.receipt != null ){
+                            responseMap.put("receipt", transactionResponse.receipt);
+                        }
+                        if((paymentSettings.paymentType == PaymentType.PaymentTypeEnum.PaymentCard ||
+                                paymentSettings.paymentType == PaymentType.PaymentTypeEnum.PreAuthCard ) &&
+                                transactionResponse.truncatedCard.trim().length()>0)
+                        {
+                            CreditCard creditCard = new CreditCard(transactionResponse);
+                            CreditCardManager creditCardManager = new CreditCardManager();
+                            creditCardManager.saveCreditCard(context, creditCard, onSavedListener);
+                        }
+
+                        listener.onTransactionSuccess(responseMap);
+                    }
+                }
+
+                @Override
+                public void onError(RequestError error) {
+                    if (listener != null) {
+                        listener.onTransactionError(error);
+                    }
+                }
+            });
+            return request;
+        }
+
+
+
+
         /**
          * This method is used for making a transaction with a token.
          *
@@ -218,7 +278,9 @@ public class PaymentApiService extends ApiService {
          * @param listener Result listener.
          */
         public static Request submitSinglePaymentToken(String paymentId, PaymentSettings paymentSettings, final ITransactionExtListener listener) {
-            return makeTransactionExt(paymentId, paymentSettings, listener);
+            return makeTransactionToken(paymentId, paymentSettings, listener);
         }
+
+
     }
 }

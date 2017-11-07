@@ -31,14 +31,18 @@ import com.bambora.nativepayment.logging.BNLog;
 import com.bambora.nativepayment.managers.CertificateManager;
 import com.bambora.nativepayment.managers.CreditCardManager;
 import com.bambora.nativepayment.models.PaymentSettings;
+import com.bambora.nativepayment.models.PaymentType;
 import com.bambora.nativepayment.models.creditcard.RegistrationFormSettings;
+import com.bambora.nativepayment.models.creditcard.RegistrationParams;
 import com.bambora.nativepayment.network.ApiService;
 import com.bambora.nativepayment.network.BNHttpClient;
 import com.bambora.nativepayment.network.HttpClient;
 import com.bambora.nativepayment.network.Request;
+import com.bambora.nativepayment.security.Crypto;
 import com.bambora.nativepayment.services.PaymentApiService;
 import com.bambora.nativepayment.services.PaymentApiService.PaymentService;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Constructor;
@@ -228,13 +232,97 @@ public class BNPaymentHandler {
     public Request makeTransaction(String paymentIdentifier, PaymentSettings paymentSettings, ITransactionListener callBack) {
         return PaymentService.makeTransaction(paymentIdentifier, paymentSettings, callBack);
     }
-    // The following is the modified version which is now deprecated due to name change. It should no longer be used and will be removed in future.
-    public Request makeTransactionExt(String paymentIdentifier, PaymentSettings paymentSettings, ITransactionExtListener callBack) {
-        return PaymentService.makeTransactionExt(paymentIdentifier, paymentSettings, callBack);
+
+    // The following is the APAC supported version which is for payment with a card
+    public Request submitSinglePaymentCard(Context context, String paymentIdentifier, PaymentSettings paymentSettings, ITransactionExtListener callBack, CreditCardManager.IOnCreditCardSaved onSavedListener) {
+        paymentSettings.paymentType = PaymentType.PaymentTypeEnum.PaymentCard;
+        return PaymentService.makeTransactionCard(context, paymentIdentifier, paymentSettings, callBack, onSavedListener);
     }
     // The following is the APAC supported version which is for payment with a token
     public Request submitSinglePaymentToken(String paymentIdentifier, PaymentSettings paymentSettings, ITransactionExtListener callBack) {
-        return PaymentService.makeTransactionExt(paymentIdentifier, paymentSettings, callBack);
+        paymentSettings.paymentType = PaymentType.PaymentTypeEnum.PaymentToken;
+        return PaymentService.makeTransactionToken(paymentIdentifier, paymentSettings, callBack);
+    }
+
+    public Request submitPreAuthToken(String paymentIdentifier, PaymentSettings paymentSettings, ITransactionExtListener callBack) {
+        paymentSettings.paymentType = PaymentType.PaymentTypeEnum.PreAuthToken;
+        return PaymentService.makeTransactionToken(paymentIdentifier, paymentSettings, callBack);
+    }
+
+    public Request submitPreAuthCard(Context context, String paymentIdentifier, PaymentSettings paymentSettings, ITransactionExtListener callBack, CreditCardManager.IOnCreditCardSaved onSavedListener) {
+        paymentSettings.paymentType = PaymentType.PaymentTypeEnum.PreAuthCard;
+        return PaymentService.makeTransactionCard(context, paymentIdentifier, paymentSettings, callBack, onSavedListener);
+    }
+
+    // The following is the APAC supported version which is for pre-auth with a card.
+    public void submitSinglePreAuthCard(final Context context,
+                                        final String paymentIdentifier,
+                                        final PaymentSettings paymentSettings,
+                                        String cardHolderName,
+                                        String cardNumber, String expiryMonth,
+                                        String expiryYear, String securityCode,
+                                        final boolean requestToken,
+                                        final ITransactionExtListener callBack,
+                                        final CreditCardManager.IOnCreditCardSaved onSavedListener) {
+        paymentSettings.paymentType = PaymentType.PaymentTypeEnum.PreAuthCard;
+        submitSingleTransactionCard(context, paymentIdentifier, paymentSettings, cardHolderName, cardNumber, expiryMonth, expiryYear, securityCode,
+                                    requestToken, callBack, onSavedListener);
+    }
+
+    // The following is the APAC supported version which is for payment with a card.
+    public void submitSinglePaymentCard(final Context context,
+                                        final String paymentIdentifier,
+                                        final PaymentSettings paymentSettings,
+                                        String cardHolderName,
+                                        String cardNumber, String expiryMonth,
+                                        String expiryYear, String securityCode,
+                                        final boolean requestToken,
+                                        final ITransactionExtListener callBack,
+                                        final CreditCardManager.IOnCreditCardSaved onSavedListener) {
+        paymentSettings.paymentType = PaymentType.PaymentTypeEnum.PaymentCard;
+        submitSingleTransactionCard(context, paymentIdentifier, paymentSettings, cardHolderName, cardNumber, expiryMonth, expiryYear, securityCode,
+                                    requestToken, callBack, onSavedListener);
+    }
+
+    /*
+     * The following is the APAC supported version which is common for payment and preauth with a card.
+     * paymentSettings.paymentType needs to have been set to PaymentType.PaymentTypeEnum.PaymentCard or PaymentType.PaymentTypeEnum.PreAuthCard to determine
+     * whether payment or preauth will occur.
+     */
+    public void submitSingleTransactionCard(final Context context,
+                                        final String paymentIdentifier,
+                                        final PaymentSettings paymentSettings,
+                                        String cardHolderName,
+                                        String cardNumber, String expiryMonth,
+                                        String expiryYear, String securityCode,
+                                        final boolean requestToken,
+                                        final ITransactionExtListener callBack,
+                                        final CreditCardManager.IOnCreditCardSaved onSavedListener) {
+        final RegistrationParams params = new RegistrationParams(new Crypto(), CertificateManager.getInstance());
+        params.setParametersAndEncrypt(context, cardHolderName, cardNumber, expiryMonth, expiryYear, securityCode,
+                new RegistrationParams.IOnEncryptionListener() {
+                    @Override
+                    public void onEncryptionComplete() {
+                        JSONObject cardObject = new JSONObject();
+                        try {
+                            RegistrationParams.EncryptedSessionKey encryptedSessionKeyObj = params.encryptedSessionKeys.get(0);
+                            cardObject.put("cardholderName", params.encryptedCard.cardHolder);
+                            cardObject.put("cardNumber", params.encryptedCard.cardNumber);
+                            cardObject.put("expiryMonth", params.encryptedCard.expiryMonth);
+                            cardObject.put("expiryYear", params.encryptedCard.expiryYear);
+                            cardObject.put("sessionKey", encryptedSessionKeyObj.sessionKey);
+                            cardObject.put("isTokenRequested", requestToken);
+                            paymentSettings.cardPaymentJsonData = cardObject;
+                            PaymentService.makeTransactionCard(context, paymentIdentifier, paymentSettings, callBack, onSavedListener);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    @Override
+                    public void onEncryptionError() {
+                        if (callBack != null) callBack.onTransactionError(null);
+                    }
+                });
     }
 
     /**

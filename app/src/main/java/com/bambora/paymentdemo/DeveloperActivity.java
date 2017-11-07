@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.bambora.nativepayment.handlers.BNPaymentHandler;
 import com.bambora.nativepayment.logging.BNLog;
 import com.bambora.nativepayment.managers.CreditCardManager;
+import com.bambora.nativepayment.models.CardRegistrationFormGuiSetting;
+import com.bambora.nativepayment.models.SubmitPaymentCardFormGuiSetting;
 import com.bambora.nativepayment.models.creditcard.CreditCard;
 import com.bambora.paymentdemo.adapter.CardListAdapter;
 
@@ -34,13 +36,54 @@ public class DeveloperActivity extends AppCompatActivity {
     private String currentEnvironment;
     RadioGroup.OnCheckedChangeListener envRadioGroupListener;
 
+    private EditText titleText;
+    private EditText cardHolderNameText;
+    private EditText cardNumberText;
+    private EditText expiryDateText;
+    private EditText securityCodeText;
+    private EditText buttonColorText;
+    private EditText buttonText;
+
+    private EditText payByCardTitleText;
+    private EditText payByCardCardHolderNameText;
+    private EditText payByCardCardNumberText;
+    private EditText payByCardExpiryDateText;
+    private EditText payByCardSecurityCodeText;
+    private EditText payByCardSwitchButtonColorText;
+    private EditText payByCardButtonColorText;
+    private EditText payByCardButtonText;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_developer);
         storage = new DeviceStorage(context);
 
+        //init registration form components.
+        titleText = (EditText) findViewById(R.id.registrationFormTitleText);
+        cardHolderNameText = (EditText) findViewById(R.id.regiCardHolderNameText);
+        cardNumberText = (EditText) findViewById(R.id.regiCardNumberText);
+        expiryDateText = (EditText) findViewById(R.id.regiExpiryDateText);
+        securityCodeText = (EditText) findViewById(R.id.regiSecurityCodeText);
+        buttonColorText = (EditText) findViewById(R.id.regiButtonColorText);
+        buttonText = (EditText) findViewById(R.id.regiButtonText);
+
+        //init pay by card form components.
+        payByCardTitleText = (EditText) findViewById(R.id.payByCardFormTitleText);
+        payByCardCardHolderNameText = (EditText) findViewById(R.id.payByCardHolderNameText);
+        payByCardCardNumberText = (EditText) findViewById(R.id.payByCardNumberText);
+        payByCardExpiryDateText = (EditText) findViewById(R.id.payByCardExpiryDateText);
+        payByCardSecurityCodeText = (EditText) findViewById(R.id.payByCardSecurityCodeText);
+        payByCardSwitchButtonColorText = (EditText) findViewById(R.id.payByCardSwitchButtonColorText);
+        payByCardButtonColorText = (EditText) findViewById(R.id.payByCardButtonColorText);
+        payByCardButtonText = (EditText) findViewById(R.id.payByCardButtonText);
+
         ProcessEnvironmentSettings();
+        //init registration from gui setting;
+        initRegistrationFormGuiSetting();
+        //init pay by card from gui setting;
+        initSubmitSinglePaymentCardFormGuiSetting();
         ShowBuildInfo();
     }
 
@@ -305,6 +348,85 @@ public class DeveloperActivity extends AppCompatActivity {
             showDialog("Failure", "There was an error in saving the custom payment data");
         }
     }
+
+    //initRegistrationFormGuiSetting from storage to ui components.
+    private void initRegistrationFormGuiSetting()
+    {
+        CardRegistrationFormGuiSetting regiGuiSetting = storage.getRegistrationFormCustomizationSetting();
+        securityCodeText.setText(regiGuiSetting.SecurityCodeWatermark);
+        buttonColorText.setText(regiGuiSetting.RegisterButtonColor);
+        titleText.setText(regiGuiSetting.TitleText);
+        cardHolderNameText.setText(regiGuiSetting.CardHolderWatermark);
+        cardNumberText.setText(regiGuiSetting.CardNumberWatermark);
+        expiryDateText.setText(regiGuiSetting.ExpiryDateWatermark);
+        buttonText.setText(regiGuiSetting.RegisterButtonText);
+    }
+
+    /**
+     * This method is the handler for the Save registration form's customization
+     * @param v the view
+     */
+    public void SaveRegistrationFormCustomizationClickHandler(View v) {
+        CardRegistrationFormGuiSetting registrationGuiSetting = new CardRegistrationFormGuiSetting();
+        registrationGuiSetting.SecurityCodeWatermark = securityCodeText.getText().toString();
+        registrationGuiSetting.RegisterButtonColor = buttonColorText.getText().toString();
+        registrationGuiSetting.TitleText = titleText.getText().toString();
+        registrationGuiSetting.CardHolderWatermark = cardHolderNameText.getText().toString();
+        registrationGuiSetting.CardNumberWatermark = cardNumberText.getText().toString();
+        registrationGuiSetting.ExpiryDateWatermark = expiryDateText.getText().toString();
+        registrationGuiSetting.RegisterButtonText = buttonText.getText().toString();
+
+        Boolean ok = storage.saveRegistrationFormGuiSettingToStorage(registrationGuiSetting);
+        if (ok) {
+            showDialog("Success", "The registration form gui setting was successfully saved");
+        }
+        else {
+            BNLog.e(getClass().getSimpleName(), "There was an error in saving the registration form gui setting");
+            showDialog("Failure", "There was an error in saving the registration form gui setting");
+        }
+    }
+
+    //initSubmitSinglePaymentCardFormGuiSetting from storage to ui components.
+    private void initSubmitSinglePaymentCardFormGuiSetting()
+    {
+        SubmitPaymentCardFormGuiSetting payByCardGuiSetting = storage.getSubmitPaymentCardFormCustomizationSetting();
+        payByCardButtonColorText.setText(payByCardGuiSetting.PayByCardButtonColor);
+        payByCardButtonText.setText(payByCardGuiSetting.PayByCardButtonText);
+        payByCardCardHolderNameText.setText(payByCardGuiSetting.CardHolderWatermark);
+        payByCardCardNumberText.setText(payByCardGuiSetting.CardNumberWatermark);
+        payByCardExpiryDateText.setText(payByCardGuiSetting.ExpiryDateWatermark);
+        payByCardSecurityCodeText.setText(payByCardGuiSetting.SecurityCodeWatermark);
+        payByCardSwitchButtonColorText.setText(payByCardGuiSetting.SwitchButtonColor);
+        payByCardTitleText.setText(payByCardGuiSetting.TitleText);
+
+    }
+
+    /**
+     * This method is the handler for the Save pay by card form's customization
+     * @param v the view
+     */
+    public void SaveSubmitSinglePaymentCardFormCustomizationClickHandler(View v) {
+        SubmitPaymentCardFormGuiSetting payByCardGuiSetting = storage.getSubmitPaymentCardFormCustomizationSetting();
+        payByCardGuiSetting.SwitchButtonColor = payByCardSwitchButtonColorText.getText().toString();
+        payByCardGuiSetting.CardHolderWatermark = payByCardCardHolderNameText.getText().toString();
+        payByCardGuiSetting.CardNumberWatermark = payByCardCardNumberText.getText().toString();
+        payByCardGuiSetting.ExpiryDateWatermark = payByCardExpiryDateText.getText().toString();
+        payByCardGuiSetting.PayByCardButtonColor = payByCardButtonColorText.getText().toString();
+        payByCardGuiSetting.PayByCardButtonText = payByCardButtonText.getText().toString();
+        payByCardGuiSetting.SecurityCodeWatermark = payByCardSecurityCodeText.getText().toString();
+        payByCardGuiSetting.TitleText = payByCardTitleText.getText().toString();
+
+        Boolean ok = storage.saveSubmitPaymentCardFormGuiSettingToStorage(payByCardGuiSetting);
+        if (ok) {
+            showDialog("Success", "The SubmitSinglePaymentCard form gui setting was successfully saved");
+        }
+        else {
+            BNLog.e(getClass().getSimpleName(), "There was an error in saving the SubmitSinglePaymentCard form gui setting");
+            showDialog("Failure", "There was an error in saving the SubmitSinglePaymentCard form gui setting");
+        }
+    }
+
+
 
     /**
      * This populates the payment data text on the screen, from the value in device storage.

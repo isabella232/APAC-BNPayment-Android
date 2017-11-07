@@ -24,6 +24,7 @@ package com.bambora.nativepayment.models.creditcard;
 
 import com.bambora.nativepayment.interfaces.IJsonResponse;
 import com.bambora.nativepayment.json.JsonContainer;
+import com.bambora.nativepayment.models.TransactionResponse;
 import com.bambora.nativepayment.utils.JsonUtils;
 
 import org.json.JSONException;
@@ -42,6 +43,7 @@ public class CreditCard implements Serializable, IJsonResponse<CreditCard> {
     private static final String KEY_CARD_TYPE = "cardType";
     private static final String KEY_EXPIRY_MONTH = "expiryMonth";
     private static final String KEY_EXPIRY_YEAR = "expiryYear";
+
 
     /**
      * Alias of the card
@@ -106,6 +108,16 @@ public class CreditCard implements Serializable, IJsonResponse<CreditCard> {
             this.transactionId = registrationResult.transactionId;
             this.creditCardToken = registrationResult.subscriptionId;
         }
+    }
+
+    /**
+     * Cast transactionResponse to CreditCard Model.
+     */
+    public CreditCard(TransactionResponse transactionResponse){
+        this.cardHolderName = transactionResponse.cardHolderName;
+        this.creditCardToken = transactionResponse.creditCardToken;
+        this.truncatedCardNumber = transactionResponse.truncatedCard;
+        this.paymentType = transactionResponse.cardType;
     }
 
     @Override

@@ -65,6 +65,19 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
+            android:name=".NativeMakeTransactionCardActivity"
+            android:label="Make Transaction Card"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustResize">
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
+        <activity
             android:name=".DeveloperActivity">
             android:label="@string/title_developer_page"
             android:parentActivityName=".MainActivity"

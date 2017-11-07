@@ -43,6 +43,11 @@ public class TransactionResponse implements IJsonResponse<TransactionResponse> {
     private static final String KEY_MESSAGE = "message";
     private static final String KEY_INFO = "info";
     private static final String KEY_RECEIPT = "receipt";
+    private static final String KEY_CARD_TOKEN = "creditCardToken";
+    private static final String KEY_CARD_HOLDER_NAME = "cardHolderName";
+    private static final String KEY_TRUNCATED_CARD = "truncatedCard";
+    private static final String KEY_CARD_TYPE = "cardType";
+
 
     public String paymentId;
 
@@ -51,6 +56,15 @@ public class TransactionResponse implements IJsonResponse<TransactionResponse> {
     public String currency;
 
     public String receipt;
+
+    public String creditCardToken;
+
+    public String cardHolderName;
+
+    public String truncatedCard;
+
+    public String cardType;
+
 
     /**
      * Error response parameters
@@ -78,6 +92,11 @@ public class TransactionResponse implements IJsonResponse<TransactionResponse> {
         errorInfo = JsonUtils.getStringIfExists(jsonObject, KEY_INFO);
 
         receipt = JsonUtils.getStringIfExists(jsonObject, KEY_RECEIPT);
+        creditCardToken = JsonUtils.getStringIfExists(jsonObject, KEY_CARD_TOKEN);
+        cardHolderName = JsonUtils.getStringIfExists(jsonObject, KEY_CARD_HOLDER_NAME);
+        truncatedCard = JsonUtils.getStringIfExists(jsonObject, KEY_TRUNCATED_CARD);
+        cardType = JsonUtils.getStringIfExists(jsonObject, KEY_CARD_TYPE);
+
         return this;
     }
 

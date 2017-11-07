@@ -22,12 +22,15 @@
 
 package com.bambora.paymentdemo;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.bambora.nativepayment.interfaces.ICardRegistrationCallback;
+import com.bambora.nativepayment.models.CardRegistrationFormGuiSetting;
 import com.bambora.nativepayment.models.creditcard.CreditCard;
 import com.bambora.nativepayment.network.RequestError;
 import com.bambora.nativepayment.widget.CardRegistrationFormLayout;
@@ -36,12 +39,16 @@ import com.bambora.nativepayment.widget.CardRegistrationFormLayout;
  * TODO
  */
 public class NativeCardRegistrationActivity extends AppCompatActivity implements ICardRegistrationCallback {
-
+    private DeviceStorage storage;
+    final Context context = this;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_native_card_registration);
         CardRegistrationFormLayout registrationForm = (CardRegistrationFormLayout) findViewById(R.id.registration_form);
+        storage = new DeviceStorage(context);
+        CardRegistrationFormGuiSetting registrationFormGuiSetting = storage.getRegistrationFormCustomizationSetting();
+        registrationForm.setFormGuiSetting(registrationFormGuiSetting);
         registrationForm.setRegistrationResultListener(this);
     }
 
