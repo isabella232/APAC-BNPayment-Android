@@ -6,13 +6,13 @@ import java.util.Map;
 
 /**
  * {@link ITransactionListener} is an interface defining the the callback method
- * for a transaction operation.
+ * for a transaction by token operation.
  *
  * Created by oskarhenriksson on 16/10/15.
  */
 public interface ITransactionExtListener {
     /**
-     * A callback method executed after a transaction operation is finished.
+     * A callback method executed after a transaction by token operation is finished.
      */
     void onTransactionSuccess(Map<String,String> response);
     void onTransactionError(RequestError error);

@@ -1,6 +1,6 @@
-# Mobile Payment - Android
+# Native Payment - Android
 
-The `Mobile Payment` SDK from Bambora makes it simple to accept credit card payments in your app. 
+The `Native Payment` SDK from Bambora makes it simple to accept credit card payments in your app. 
 
 ## Requirements
 
@@ -22,16 +22,16 @@ Internet (android.permission.INTERNET)
 
 ## Documentation
 
-On our developer portal, you can find a [tutorial](https://dev-apac.bambora.com) on how to install, setup and use `Mobile Payment` for Android. The tutorial includes code examples and test card data.
+On our developer portal, you can find a [tutorial](http://dev.bambora.com/mobile.html#native-payment-android) on how to install, setup and use `Native Payment` for Android. The tutorial includes code examples and test card data.
 
 ## Author
 
-[Bambora APAC](http://www.bambora.com/en/au/)
+[Bambora On Mobile AB](http://www.bambora.com/en/bambora-on-mobile/)
 
 ## Contact info
 
-We welcome questions and feedback - you can reach us by sending an e-mail to [setup.apac@bambora.com](mailto:setup.apac@bambora.com).
+We welcome questions and feedback - you can reach us by sending an e-mail to [sdk@bambora.com](mailto:sdk@bambora.com).
 
 ## License
 
-`Mobile Payment` is available under the MIT license. See the [LICENSE](LICENSE) file for more info.
+`Native Payment` is available under the MIT license. See the [LICENSE](LICENSE) file for more info.

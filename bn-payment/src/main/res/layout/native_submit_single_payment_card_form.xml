@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="7dp"
+            android:paddingTop="10dp"
+            android:text="Enter card details"
+            style="@style/BN.HeaderText" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="1dp"
+            android:background="@color/bn_lighter_grey">
+
+            <com.bambora.nativepayment.widget.edittext.CardHolderEditText
+                android:id="@+id/et_card_holder"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/bn_standard_item_height"
+                android:inputType="text"
+                android:layout_marginBottom="1dp"
+                style="@style/BN.EditText.CardForm" />
+
+            <com.bambora.nativepayment.widget.edittext.CardNumberEditText
+                android:id="@+id/et_card_number"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/bn_standard_item_height"
+                style="@style/BN.EditText.CardForm" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/bn_standard_item_height"
+                android:orientation="horizontal"
+                android:paddingTop="1dp">
+
+                <com.bambora.nativepayment.widget.edittext.ExpiryDateEditText
+                    android:id="@+id/et_expiry_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginRight="1dp"
+                    style="@style/BN.EditText.CardForm" />
+
+                <com.bambora.nativepayment.widget.edittext.SecurityCodeEditText
+                    android:id="@+id/et_security_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    style="@style/BN.EditText.CardForm" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/bn_standard_item_height"
+            android:orientation="horizontal"
+            android:background="@android:color/white"
+            android:paddingTop="3dp">
+            <TextView
+                android:id="@+id/tv_save_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="7dp"
+                android:paddingTop="10dp"
+                android:paddingRight="5px"
+                android:text="Save Card"
+                style="@style/BN.HeaderText" />
+            <ToggleButton
+                android:id="@+id/togg_is_save_card_btn"
+                android:layout_below="@+id/text6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_selector"
+                android:textColor="@drawable/white_disabled_color"
+                android:gravity="center"
+                />
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_register"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bn_standard_item_height"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/button_selector"
+        android:textColor="@drawable/white_disabled_color"
+        android:enabled="false"
+        android:text="Pay Once" />
+
+</RelativeLayout>

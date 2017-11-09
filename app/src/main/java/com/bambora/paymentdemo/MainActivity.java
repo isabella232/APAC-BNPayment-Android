@@ -36,10 +36,12 @@ import android.widget.Button;
 
 import com.bambora.nativepayment.handlers.BNPaymentHandler;
 import com.bambora.nativepayment.handlers.BNPaymentHandler.BNPaymentBuilder;
+import com.bambora.nativepayment.interfaces.ICardRegistrationCallback;
 import com.bambora.nativepayment.interfaces.ITransactionExtListener;
 import com.bambora.nativepayment.logging.BNLog;
 import com.bambora.nativepayment.managers.CreditCardManager;
 import com.bambora.nativepayment.models.PaymentSettings;
+import com.bambora.nativepayment.models.PaymentType;
 import com.bambora.nativepayment.models.creditcard.CreditCard;
 import com.bambora.nativepayment.network.RequestError;
 import com.bambora.paymentdemo.adapter.CardListAdapter;
@@ -47,11 +49,11 @@ import com.bambora.paymentdemo.adapter.CardListAdapter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -151,11 +153,23 @@ public class MainActivity extends AppCompatActivity {
         Button makeTransactionButton = (Button) findViewById(R.id.make_transaction_button);
         makeTransactionButton.setOnClickListener(mMakeTransactionListener);
 
+        Button submitPreAuthTokenButton = (Button) findViewById(R.id.submit_pre_auth_token_button);
+        submitPreAuthTokenButton.setOnClickListener(mSubmitPreAuthTokenListener);
+
         Button listCreditCardsButton = (Button) findViewById(R.id.list_credit_cards_button);
         listCreditCardsButton.setOnClickListener(mListCreditCardsListener);
 
         Button developerPageButton = (Button) findViewById(R.id.developer_button);
         developerPageButton.setOnClickListener(mDeveloperButtonListener);
+
+        Button makeTransactionCardButton = (Button) findViewById(R.id.make_transaction_card_button);
+        makeTransactionCardButton.setOnClickListener(mMakeTransactionCardListener);
+
+        Button submitPreAuthCardButton = (Button) findViewById(R.id.submit_pre_auth_card_button);
+        submitPreAuthCardButton.setOnClickListener(mSubmitPreAuthCardListener);
+
+        Button testSdkApiButton = (Button) findViewById(R.id.test_sdk_api_button);
+        testSdkApiButton.setOnClickListener(mSdkApiTesting);
     }
 
     private void showHostedPaymentPage() {
@@ -168,29 +182,63 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void makeTransaction(CreditCard creditCard) {
-        String paymentId = "test-payment-" + new Date().getTime();
+    private void showNativeMakeTransactionCard(PaymentType.PaymentTypeEnum paymentorPreAuth) {
+        Intent intent = new Intent(this, NativeMakeTransactionCardActivity.class);
+
+        intent.putExtra("PaymentOrPreAuth", paymentorPreAuth.ordinal());
+
+        startActivity(intent);
+    }
+
+    private void submitSinglePaymentToken(CreditCard creditCard) {
+        String paymentId = "test-payment-token-" + new Date().getTime();
         PaymentSettings paymentSettings = new PaymentSettings();
-        paymentSettings.amount = 100;
-        paymentSettings.comment = "This is a test transaction.";
+        paymentSettings.amount = 200;
+        paymentSettings.comment = "This is a test transaction by token.";
         paymentSettings.creditCardToken = creditCard.getCreditCardToken();
         paymentSettings.currency = "AUD";
         paymentSettings.cvcCode =  "123";
-
         JSONObject paymentJsonData = getJsonPayData();
         Log.i(getClass().getSimpleName(), paymentJsonData.toString());
         paymentSettings.paymentJsonData = paymentJsonData;
 
         BNPaymentHandler.getInstance().submitSinglePaymentToken(paymentId, paymentSettings, new ITransactionExtListener() {
+                @Override
+                public void onTransactionSuccess(Map<String, String> responseDictionary) {
+                    String receipt = responseDictionary.get("receipt");
+                    showDialog("Success", "The payment succeeded. Receipt: " + (receipt != null?receipt:"?"));
+                }
+
+                @Override
+                public void onTransactionError(RequestError error) {
+                    showDialog("Failure", "The payment did not succeed.");
+                }
+        });
+    }
+
+
+    private void submitPreAuthToken(CreditCard creditCard) {
+        String paymentId = "test-pre-auth-token-" + new Date().getTime();
+        PaymentSettings paymentSettings = new PaymentSettings();
+        paymentSettings.amount = 100;
+        paymentSettings.comment = "This is a test token PreAuth.";
+        paymentSettings.creditCardToken = creditCard.getCreditCardToken();
+        paymentSettings.currency = "AUD";
+        paymentSettings.cvcCode =  "123";
+        JSONObject paymentJsonData = getJsonPayData();
+        Log.i(getClass().getSimpleName(), paymentJsonData.toString());
+        paymentSettings.paymentJsonData = paymentJsonData;
+
+        BNPaymentHandler.getInstance().submitPreAuthToken(paymentId, paymentSettings, new ITransactionExtListener() {
             @Override
             public void onTransactionSuccess(Map<String, String> responseDictionary) {
                 String receipt = responseDictionary.get("receipt");
-                showDialog("Success", "The payment succeeded. Receipt: " + (receipt != null?receipt:"?"));
+                showDialog("Success", "The PreAuth succeeded. Receipt: " + (receipt != null?receipt:"?"));
             }
 
             @Override
             public void onTransactionError(RequestError error) {
-                showDialog("Failure", "The payment did not succeed.");
+                showDialog("Failure", "The PreAuth did not succeed.");
             }
         });
     }
@@ -213,15 +261,33 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void showCardListDialog(final List<CreditCard> creditCardList) {
+    private void showCardListDialogForSubmitPaymentToken(final List<CreditCard> creditCardList) {
         CardListAdapter listAdapter = new CardListAdapter(MainActivity.this, creditCardList);
         Builder builder = new Builder(MainActivity.this);
-        builder.setTitle("Select a card");
+        builder.setTitle("Token Payment - Select a card");
         builder.setNegativeButton("Cancel", null);
         builder.setAdapter(listAdapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                makeTransaction(creditCardList.get(which));
+                submitSinglePaymentToken(creditCardList.get(which));
+            }
+        });
+        builder.create().show();
+    }
+
+    /*
+    * showCardListDialogForSubmitPreAuthToken
+    * handle display the list of credit card, and pre-auth click handling.
+    * */
+    private void showCardListDialogForSubmitPreAuthToken(final List<CreditCard> creditCardList) {
+        CardListAdapter listAdapter = new CardListAdapter(MainActivity.this, creditCardList);
+        Builder builder = new Builder(MainActivity.this);
+        builder.setTitle("PreAuth - Select a card");
+        builder.setNegativeButton("Cancel", null);
+        builder.setAdapter(listAdapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                submitPreAuthToken(creditCardList.get(which));
             }
         });
         builder.create().show();
@@ -241,6 +307,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+
     Button.OnClickListener mMakeTransactionListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -248,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onCreditCardRead(List<CreditCard> creditCards) {
                     if (creditCards != null && creditCards.size() > 0) {
-                        showCardListDialog(creditCards);
+                        showCardListDialogForSubmitPaymentToken(creditCards);
                     } else {
                         showDialog("No credit card registered", "Please register a credit card in order to make a purchase.");
                     }
@@ -256,6 +323,136 @@ public class MainActivity extends AppCompatActivity {
             });
         }
     };
+
+    /*
+    * mSubmitPreAuthTokenListener, handle PreAuth button click.
+    * */
+    Button.OnClickListener mSubmitPreAuthTokenListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            BNPaymentHandler.getInstance().getRegisteredCreditCards(MainActivity.this, new CreditCardManager.IOnCreditCardRead() {
+                @Override
+                public void onCreditCardRead(List<CreditCard> creditCards) {
+                    if (creditCards != null && creditCards.size() > 0) {
+                        showCardListDialogForSubmitPreAuthToken(creditCards);
+                    } else {
+                        showDialog("No credit card registered", "Please register a credit card in order to make a pre-auth.");
+                    }
+                }
+            });
+        }
+    };
+
+    Button.OnClickListener mMakeTransactionCardListener = new View.OnClickListener(){
+        @Override
+        public void onClick(View view) {
+            showNativeMakeTransactionCard(PaymentType.PaymentTypeEnum.PaymentCard);
+        }
+    };
+
+    Button.OnClickListener mSubmitPreAuthCardListener = new View.OnClickListener(){
+        @Override
+        public void onClick(View view) {
+            showNativeMakeTransactionCard(PaymentType.PaymentTypeEnum.PreAuthCard);
+        }
+    };
+
+    /*
+     * Used to programmatically test the SDK API.
+     */
+    Button.OnClickListener mSdkApiTesting = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            testSdkApiPayCard();
+            testSdkApiPreAuthCard();
+        }
+    };
+
+    /*
+     * This method performs a $1 payment by card using the programmatic API.
+     */
+    private void testSdkApiPayCard() {
+        PaymentSettings paymentSettings = new PaymentSettings();
+        paymentSettings.amount = 100;
+        paymentSettings.comment = "This is a test payment of $1";
+        paymentSettings.currency = "AUD";
+        JSONObject paymentJsonData = getJsonPayData();
+        paymentSettings.paymentJsonData = paymentJsonData;
+        Boolean isRequestToken = false;
+
+        BNPaymentHandler.getInstance().submitSinglePaymentCard(
+                getApplicationContext(),
+                "APIpay",
+                paymentSettings,
+                "Card Holder Name",
+                "4242424242424242",
+                "12",  //Expiry Month
+                "20",  //Expiry Year
+                "123", //CVC
+                isRequestToken,
+                new ITransactionExtListener() {
+                    @Override
+                    public void onTransactionSuccess(Map<String, String> responseDictionary) {
+                        String receipt = responseDictionary.get("receipt");
+                        showDialog("Success", "The Pay succeeded. Receipt: " + (receipt != null?receipt:"?"));
+                    }
+
+                    @Override
+                    public void onTransactionError(RequestError error) {
+                        showDialog("Failure", "The Pay did not succeed.");
+                    }
+                },
+            new CreditCardManager.IOnCreditCardSaved() {
+                @Override
+                public void onCreditCardSaved(CreditCard creditCard) {
+
+                }
+            }
+        );
+      }
+
+    /*
+     * This method performs a $1 pre-auth by card using the programmatic API.
+     */
+    private void testSdkApiPreAuthCard() {
+        PaymentSettings paymentSettings = new PaymentSettings();
+        paymentSettings.amount = 100;
+        paymentSettings.comment = "This is a test preAuth of $1";
+        paymentSettings.currency = "AUD";
+        JSONObject paymentJsonData = getJsonPayData();
+        paymentSettings.paymentJsonData = paymentJsonData;
+        Boolean isRequestToken = false;
+
+        BNPaymentHandler.getInstance().submitSinglePreAuthCard(
+                getApplicationContext(),
+                "APIpreauth",
+                paymentSettings,
+                "Card Holder Name",
+                "4242424242424242",
+                "12",  //Expiry Month
+                "20",  //Expiry Year
+                "123", //CVC
+                isRequestToken,
+                new ITransactionExtListener() {
+                    @Override
+                    public void onTransactionSuccess(Map<String, String> responseDictionary) {
+                        String receipt = responseDictionary.get("receipt");
+                        showDialog("Success", "The PreAuth succeeded. Receipt: " + (receipt != null?receipt:"?"));
+                    }
+
+                    @Override
+                    public void onTransactionError(RequestError error) {
+                        showDialog("Failure", "The PreAuth did not succeed.");
+                    }
+                },
+                new CreditCardManager.IOnCreditCardSaved() {
+                    @Override
+                    public void onCreditCardSaved(CreditCard creditCard) {
+
+                    }
+                }
+        );
+    }
 
     Button.OnClickListener mListCreditCardsListener = new View.OnClickListener() {
         @Override

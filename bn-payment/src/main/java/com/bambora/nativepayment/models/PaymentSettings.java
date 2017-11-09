@@ -23,6 +23,8 @@
 package com.bambora.nativepayment.models;
 
 
+import android.util.Log;
+
 import com.bambora.nativepayment.interfaces.IJsonRequest;
 import com.bambora.nativepayment.logging.BNLog;
 
@@ -42,6 +44,8 @@ public class PaymentSettings implements IJsonRequest {
     private static final String KEY_TOKEN = "token";
     private static final String KEY_CVC_CODE = "cvcCode";
     private static final String KEY_PAYMENT_JSON_DATA= "paymentJsonData";
+    private static final String KEY_CARD_PAYMENT_JSON_DATA= "cardJsonData";
+    private String KEY_TRANSACTION_TYPE = "TrnType";
 
     public Integer amount;
     public String currency;
@@ -49,7 +53,9 @@ public class PaymentSettings implements IJsonRequest {
     public String creditCardToken;
     public String cvcCode;
     public JSONObject paymentJsonData;
+    public JSONObject cardPaymentJsonData;
 
+    public PaymentType.PaymentTypeEnum paymentType;
     //NOTE:
     // If 'comment' is null it will not be serialised => {"amount":100,"token":"92699060984307713","currency":"SEK"}
     // if 'comment' is "" it will be serialised as follow => {"comment":"","amount":100,"token":"92699060984307713","currency":"SEK"}
@@ -66,12 +72,44 @@ public class PaymentSettings implements IJsonRequest {
                 jsonObject.put(KEY_CVC_CODE, cvcCode);
             }
             if (paymentJsonData != null) {
-                // Should we check it is a valid JSon?
+                //set transaction type.
+                setTransactionType();
+                //set paymentJsonData.
                 jsonObject.put(KEY_PAYMENT_JSON_DATA, paymentJsonData);
             }
+            if (isCardPayment() && cardPaymentJsonData != null) {
+                jsonObject.put(KEY_CARD_PAYMENT_JSON_DATA, cardPaymentJsonData);
+            }
+
         } catch (JSONException e) {
             BNLog.jsonParseError(getClass().getSimpleName(), e);
         }
         return jsonObject.toString();
     }
+
+    /**
+     * Mapping backend transaction type based on the frontend payment type
+     */
+    private void setTransactionType()
+    {
+        if(paymentJsonData!=null)
+        {
+            try{
+                    paymentJsonData.put(KEY_TRANSACTION_TYPE, PaymentType.PaymentTypeHash().get(paymentType));
+            }
+            catch (JSONException e){
+                    Log.e("Set Payment Type", "unexpected JSON exception", e);
+            }
+
+        }
+    }
+
+    private boolean isCardPayment(){
+        if(paymentType!=null &&
+          (paymentType==PaymentType.PaymentTypeEnum.PaymentCard || paymentType==PaymentType.PaymentTypeEnum.PreAuthCard))
+        {
+            return true;
+        }
+        return false;
+    };
 }

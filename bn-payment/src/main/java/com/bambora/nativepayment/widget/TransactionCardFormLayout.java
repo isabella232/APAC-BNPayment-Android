@@ -33,11 +33,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.bambora.nativepayment.R;
 import com.bambora.nativepayment.handlers.BNPaymentHandler;
-import com.bambora.nativepayment.interfaces.ICardRegistrationCallback;
+import com.bambora.nativepayment.managers.CreditCardManager;
 import com.bambora.nativepayment.models.CardRegistrationFormGuiSetting;
+import com.bambora.nativepayment.models.PaymentSettings;
+import com.bambora.nativepayment.interfaces.ITransactionExtListener;
+import com.bambora.nativepayment.models.PaymentType;
+import com.bambora.nativepayment.models.SubmitPaymentCardFormGuiSetting;
+import com.bambora.nativepayment.models.creditcard.CreditCard;
 import com.bambora.nativepayment.utils.CompatHelper;
 import com.bambora.nativepayment.widget.edittext.CardFormEditText;
 import com.bambora.nativepayment.widget.edittext.CardFormEditText.IOnValidationEventListener;
@@ -49,57 +55,66 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TODO
+ * Created by ch0110593 on 7/25/2017.
  */
-public class CardRegistrationFormLayout extends RelativeLayout implements IOnValidationEventListener {
 
-    private ICardRegistrationCallback resultListener;
+public class TransactionCardFormLayout extends RelativeLayout implements IOnValidationEventListener {
 
+    private ITransactionExtListener resultListener;
+    private CreditCardManager.IOnCreditCardSaved onSavedCardListener;
+    private PaymentSettings paymentSettings;
+    private String paymentId;
     private TextView pageTitle;
     private CardHolderEditText cardHolderEditText;
     private CardNumberEditText cardNumberEditText;
     private ExpiryDateEditText expiryDateEditText;
     private CardFormEditText securityCodeEditText;
+    private ToggleButton isSaveCardButton;
     private Map<EditText, Boolean> inputValidStates = new HashMap<>();
     private Button registrationButton;
-    private CardRegistrationFormGuiSetting registrationGuiSetting;
+    private SubmitPaymentCardFormGuiSetting submitPaymentCardFormGuiSetting;
 
-    public CardRegistrationFormLayout(Context context) {
+    public TransactionCardFormLayout(Context context) {
         super(context);
         setupView(context);
     }
 
-    public CardRegistrationFormLayout(Context context, AttributeSet attrs) {
+    public TransactionCardFormLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         setupView(context);
     }
 
-    public CardRegistrationFormLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public TransactionCardFormLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setupView(context);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public CardRegistrationFormLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public TransactionCardFormLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         setupView(context);
     }
 
-    public void setRegistrationResultListener(ICardRegistrationCallback resultListener) {
+    public void setTransactionCardResultListener(ITransactionExtListener resultListener) {
         this.resultListener = resultListener;
     }
+    public void setSavedCardListener(CreditCardManager.IOnCreditCardSaved onSavedListener) {
+        this.onSavedCardListener = onSavedListener;
+    }
+
+
+    public void setTransactionParams(PaymentSettings paymentSettings, String paymentId)
+    {
+        this.paymentId = paymentId;
+        this.paymentSettings = paymentSettings;
+    }
+
 
     public void setTitle(String title) {
         TextView titleTextView = (TextView) findViewById(R.id.tv_title);
         if (titleTextView != null) titleTextView.setText(title);
     }
 
-    public void setFormGuiSetting(CardRegistrationFormGuiSetting registrationGuiSetting) {
-        //catch private registrationGuiSetting in the local scope .
-        this.registrationGuiSetting = registrationGuiSetting;
-        //Vew customization.
-        viewCustomization();
-    }
     @Override
     public void onFocusChanged(EditText view, boolean hasFocus, boolean inputValid) {
         if (hasFocus) {
@@ -117,15 +132,15 @@ public class CardRegistrationFormLayout extends RelativeLayout implements IOnVal
 
     private void setupView(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        inflater.inflate(R.layout.native_card_registration_form, this);
+        inflater.inflate(R.layout.native_submit_single_payment_card_form, this);
         pageTitle = (TextView) findViewById(R.id.tv_title);
         cardHolderEditText = (CardHolderEditText) findViewById(R.id.et_card_holder);
         cardNumberEditText = (CardNumberEditText) findViewById(R.id.et_card_number);
         expiryDateEditText = (ExpiryDateEditText) findViewById(R.id.et_expiry_date);
         securityCodeEditText = (CardFormEditText) findViewById(R.id.et_security_code);
-
+        isSaveCardButton = (ToggleButton) findViewById(R.id.togg_is_save_card_btn);
         registrationButton = (Button) findViewById(R.id.btn_register);
-        registrationButton.setOnClickListener(onRegisterButtonClickListener);
+        registrationButton.setOnClickListener(onSubmitSinglePaymentCardButtonClickListener);
 
         cardHolderEditText.setValidationListener(this);
         cardNumberEditText.setValidationListener(this);
@@ -136,18 +151,24 @@ public class CardRegistrationFormLayout extends RelativeLayout implements IOnVal
         inputValidStates.put(cardNumberEditText, false);
         inputValidStates.put(expiryDateEditText, false);
         inputValidStates.put(securityCodeEditText, true);
+    }
 
-
+    public void setFormGuiSetting(SubmitPaymentCardFormGuiSetting guiSetting) {
+        //catch private SubmitPaymentCardFormGuiSetting in the local scope .
+        this.submitPaymentCardFormGuiSetting = guiSetting;
+        //Vew customization.
+        viewCustomization();
     }
 
     private void viewCustomization()
     {
-        if(registrationGuiSetting==null)
+        if(submitPaymentCardFormGuiSetting==null)
         {
             return;
         }
         TitleCustomization();
-        RegisterButtonCustomization();
+        SubmitSinglePaymentCardButtonCustomization();
+        SubmitSinglePaymentCardSwitchButtonCustomization();
         CardHolderCustomization();
         CardNumberCustomization();
         ExpiryDateCustomization();
@@ -157,29 +178,42 @@ public class CardRegistrationFormLayout extends RelativeLayout implements IOnVal
     private void TitleCustomization()
     {
         //Title Text
-        if(registrationGuiSetting.TitleText!=null &&
-           registrationGuiSetting.TitleText.trim().length()>0 &&
+        if(submitPaymentCardFormGuiSetting.TitleText!=null &&
+                submitPaymentCardFormGuiSetting.TitleText.trim().length()>0 &&
                 pageTitle!=null)
         {
-            pageTitle.setText(registrationGuiSetting.TitleText);
+            pageTitle.setText(submitPaymentCardFormGuiSetting.TitleText);
         }
     }
 
-    private void RegisterButtonCustomization()
+    private void SubmitSinglePaymentCardButtonCustomization()
     {
-         //Register Button Text
+        //Register Button Text
         if(registrationButton!=null)
         {
-            if(registrationGuiSetting.RegisterButtonText.trim().length()>0 &&
+            if(submitPaymentCardFormGuiSetting.PayByCardButtonText.trim().length()>0 &&
                     registrationButton!=null)
             {
-               registrationButton.setText(registrationGuiSetting.RegisterButtonText);
+                registrationButton.setText(submitPaymentCardFormGuiSetting.PayByCardButtonText);
             }
             //Todo: More validation
-            if(registrationGuiSetting.RegisterButtonColor.trim().length()==7)
+            if(submitPaymentCardFormGuiSetting.PayByCardButtonColor.trim().length()==7)
             {
-                int colorValue = Color.parseColor(registrationGuiSetting.RegisterButtonColor);
+                int colorValue = Color.parseColor(submitPaymentCardFormGuiSetting.PayByCardButtonColor);
                 registrationButton.setBackgroundColor(colorValue);
+            }
+        }
+    }
+
+    private void SubmitSinglePaymentCardSwitchButtonCustomization()
+    {
+        //Register Button Text
+        if(isSaveCardButton!=null)
+        {
+            if(submitPaymentCardFormGuiSetting.SwitchButtonColor.trim().length()==7)
+            {
+                int colorValue = Color.parseColor(submitPaymentCardFormGuiSetting.SwitchButtonColor);
+                isSaveCardButton.setBackgroundColor(colorValue);
             }
         }
     }
@@ -189,10 +223,10 @@ public class CardRegistrationFormLayout extends RelativeLayout implements IOnVal
         //Card Holder Name Watermark
         if(cardHolderEditText!=null)
         {
-            if(registrationGuiSetting.CardHolderWatermark!=null &&
-                    registrationGuiSetting.CardHolderWatermark.trim().length()>0)
+            if(submitPaymentCardFormGuiSetting.CardHolderWatermark!=null &&
+                    submitPaymentCardFormGuiSetting.CardHolderWatermark.trim().length()>0)
             {
-                cardHolderEditText.setHint(registrationGuiSetting.CardHolderWatermark);
+                cardHolderEditText.setHint(submitPaymentCardFormGuiSetting.CardHolderWatermark);
             }
 
         }
@@ -201,33 +235,33 @@ public class CardRegistrationFormLayout extends RelativeLayout implements IOnVal
     private void CardNumberCustomization()
     {
         //CardNumber Watermark
-        if(registrationGuiSetting.CardNumberWatermark!=null &&
-                registrationGuiSetting.CardNumberWatermark.trim().length()>0 &&
+        if(submitPaymentCardFormGuiSetting.CardNumberWatermark!=null &&
+                submitPaymentCardFormGuiSetting.CardNumberWatermark.trim().length()>0 &&
                 cardNumberEditText!=null)
         {
-            cardNumberEditText.setHint(registrationGuiSetting.CardNumberWatermark);
+            cardNumberEditText.setHint(submitPaymentCardFormGuiSetting.CardNumberWatermark);
         }
     }
 
     private void ExpiryDateCustomization()
     {
         //ExpiryDate Watermark
-        if(registrationGuiSetting.ExpiryDateWatermark!=null &&
-                registrationGuiSetting.ExpiryDateWatermark.trim().length()>0 &&
+        if(submitPaymentCardFormGuiSetting.ExpiryDateWatermark!=null &&
+                submitPaymentCardFormGuiSetting.ExpiryDateWatermark.trim().length()>0 &&
                 expiryDateEditText!=null)
         {
-            expiryDateEditText.setHint(registrationGuiSetting.ExpiryDateWatermark);
+            expiryDateEditText.setHint(submitPaymentCardFormGuiSetting.ExpiryDateWatermark);
         }
     }
 
     private void SecurityCodeCustomization()
     {
         //SecurityCode Watermark
-        if(registrationGuiSetting.SecurityCodeWatermark!=null &&
-                registrationGuiSetting.SecurityCodeWatermark.trim().length()>0 &&
+        if(submitPaymentCardFormGuiSetting.SecurityCodeWatermark!=null &&
+                submitPaymentCardFormGuiSetting.SecurityCodeWatermark.trim().length()>0 &&
                 securityCodeEditText!=null)
         {
-            securityCodeEditText.setHint(registrationGuiSetting.SecurityCodeWatermark);
+            securityCodeEditText.setHint(submitPaymentCardFormGuiSetting.SecurityCodeWatermark);
         }
     }
 
@@ -242,19 +276,21 @@ public class CardRegistrationFormLayout extends RelativeLayout implements IOnVal
         registrationButton.setEnabled(enabled);
     }
 
-    private OnClickListener onRegisterButtonClickListener = new OnClickListener() {
+    /**
+     * This method is called when the 'Pay' button is clicked. It handles both purchase and
+     * pre-auth. These actions are differentiated based on paymentType.
+     */
+    private OnClickListener onSubmitSinglePaymentCardButtonClickListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
-            BNPaymentHandler.getInstance().registerCreditCard(
+            BNPaymentHandler.getInstance().submitSingleTransactionCard(
                     getContext(),
-                    cardHolderEditText.getText().toString(),
+                    paymentId, paymentSettings, cardHolderEditText.getText().toString(),
                     cardNumberEditText.getText().toString(),
                     expiryDateEditText.getEnteredExpiryMonth(),
                     expiryDateEditText.getEnteredExpiryYear(),
                     securityCodeEditText.getText().toString(),
-                    resultListener);
+                    isSaveCardButton.isChecked(), resultListener, onSavedCardListener);
         }
     };
-
-
 }
