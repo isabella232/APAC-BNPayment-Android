@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -52,7 +54,7 @@ public class DeveloperActivity extends AppCompatActivity {
     private EditText payByCardSwitchButtonColorText;
     private EditText payByCardButtonColorText;
     private EditText payByCardButtonText;
-
+    private EditText payLoadingBarColorText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +80,7 @@ public class DeveloperActivity extends AppCompatActivity {
         payByCardSwitchButtonColorText = (EditText) findViewById(R.id.payByCardSwitchButtonColorText);
         payByCardButtonColorText = (EditText) findViewById(R.id.payByCardButtonColorText);
         payByCardButtonText = (EditText) findViewById(R.id.payByCardButtonText);
+        payLoadingBarColorText = (EditText) findViewById(R.id.payLoadingBarColorText);
 
         ProcessEnvironmentSettings();
         //init registration from gui setting;
@@ -100,6 +103,7 @@ public class DeveloperActivity extends AppCompatActivity {
             Boolean ok = storage.saveMerchantIdFToStorage(currentMerchantIdName, merchID);
             if (ok) {
                 showDialog("Success", "The Merchant ID was successfully saved");
+                resetAccountAndMode();
             } else {
                 BNLog.e(getClass().getSimpleName(), "There was an error in saving the Merchant ID");
                 showDialog("Failure", "There was an error in saving the Merchant ID");
@@ -149,15 +153,15 @@ public class DeveloperActivity extends AppCompatActivity {
         currentEnvironment = storage.getEnvironmentNameFromStorage();
         if (currentEnvironment == null || currentEnvironment.isEmpty() ||
                 (!currentEnvironment.equals("DEV") && !currentEnvironment.equals("UAT") && !currentEnvironment.equals("PROD"))) {
-            // environment has not been set, so default to DEV
-            currentEnvironment = "DEV";
+            // environment has not been set, so default to UAT
+            currentEnvironment = "UAT";
         }
 
         envRadioGroupListener = new RadioGroup.OnCheckedChangeListener() {
             public void onCheckedChanged(RadioGroup group, final int checkedId) {
                 new AlertDialog.Builder(context)
                         .setTitle("Change Environment")
-                        .setMessage("All your saved cards will be deleted.\nPlease restart the app for the change to take effect")
+                        .setMessage("All your saved cards will be deleted.")
                         // Add the buttons
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
@@ -221,29 +225,45 @@ public class DeveloperActivity extends AppCompatActivity {
 
         UpdateToCurrentEnvironment();
 
-        DeleteAllCards();
-
         if (ok) {
-            showDialog("Success", "The environment has been successfully changed. Please restart the app");
+            showDialog("Success", "The environment has been successfully changed.");
+            resetAccountAndMode();
         } else {
             BNLog.e(getClass().getSimpleName(), "There was an error in saving the environment change");
         }
     }
 
-    private void DeleteAllCards() {
-        final BNPaymentHandler paymentHandler = BNPaymentHandler.getInstance();
-        paymentHandler.getRegisteredCreditCards(this, new CreditCardManager.IOnCreditCardRead() {
-            @Override
-            public void onCreditCardRead(List<CreditCard> creditCards) {
-                if (creditCards != null) {
-                    for (int ccNum = 0; ccNum < creditCards.size(); ccNum++) {
-                        CreditCard cc = creditCards.get(ccNum);
-                        BNPaymentHandler.getInstance().deleteCreditCard(context /*null*/, cc.getCreditCardToken(), null);
-                    }
-                }
-            }
-        });
+    // reset the GUID and running environment (DEV/UAT/PROD)
+    private void resetAccountAndMode(){
+        String currentMerchantIdKeyName = getString(R.string.MERCHANT_ID_DEV_NAME);
+        String url = "https://devsandbox.ippayments.com.au/rapi/";
+        Boolean debugValue=true;
+        switch (currentEnvironment) {
+            case "DEV":
+                currentMerchantIdKeyName = getString(R.string.MERCHANT_ID_DEV_NAME);
+                url = "https://devsandbox.ippayments.com.au/rapi/";
+                break;
+            case "UAT":
+                currentMerchantIdKeyName = getString(R.string.MERCHANT_ID_UAT_NAME);
+                url = "https://uat.ippayments.com.au/rapi/";
+                break;
+            case "PROD":
+                currentMerchantIdKeyName = getString(R.string.MERCHANT_ID_PROD_NAME);
+                url = "https://www.ippayments.com.au/rapi/";
+                debugValue=false;
+                break;
+        }
+        String readMerchantID = storage.getMerchantIdFromStorage(currentMerchantIdKeyName);
+        BNPaymentHandler.BNPaymentBuilder paymentBuilder = new BNPaymentHandler.BNPaymentBuilder(getApplicationContext())
+                .merchantAccount(readMerchantID)
+                .debug(debugValue)
+                .baseUrl(url);
+        BNPaymentHandler.setupBNPayments(paymentBuilder);
     }
+
+
+
+
 
     /**
      * This selects the environment radio button and sets the merchantid storage name corresponding to the currentEnvironment object variable.
@@ -295,6 +315,8 @@ public class DeveloperActivity extends AppCompatActivity {
         try {
             if (!regData.equals("")) {
                 JSONObject obj = new JSONObject(regData);
+                Log.i(getClass().getSimpleName(), obj.toString());
+                BNPaymentHandler.getInstance().setRegistrationJsonData(obj);
             }
             ok = storage.saveRegDataToStorage(regData);
         } catch (JSONException e) {
@@ -314,11 +336,28 @@ public class DeveloperActivity extends AppCompatActivity {
      */
     private void DisplayRegData() {
         // get registration data from shared preferences
+
+        EditText editText = (EditText) findViewById(R.id.regDataText);
+
         String readRegData = storage.getRegDataFromStorage();
         if (readRegData != null && !readRegData.isEmpty()) {
-            EditText editText = (EditText) findViewById(R.id.regDataText);
+
             editText.setText(readRegData);
         }
+
+        editText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                view.getParent().requestDisallowInterceptTouchEvent(true);
+                switch (motionEvent.getAction() & MotionEvent.ACTION_MASK){
+                    case MotionEvent.ACTION_UP:
+                        view.getParent().requestDisallowInterceptTouchEvent(false);
+                        return false;
+                }
+                return false;
+            }
+        });
+
     }
 
     /**
@@ -398,7 +437,7 @@ public class DeveloperActivity extends AppCompatActivity {
         payByCardSecurityCodeText.setText(payByCardGuiSetting.SecurityCodeWatermark);
         payByCardSwitchButtonColorText.setText(payByCardGuiSetting.SwitchButtonColor);
         payByCardTitleText.setText(payByCardGuiSetting.TitleText);
-
+        payLoadingBarColorText.setText(payByCardGuiSetting.PayLoadingBarColor);
     }
 
     /**
@@ -415,6 +454,7 @@ public class DeveloperActivity extends AppCompatActivity {
         payByCardGuiSetting.PayByCardButtonText = payByCardButtonText.getText().toString();
         payByCardGuiSetting.SecurityCodeWatermark = payByCardSecurityCodeText.getText().toString();
         payByCardGuiSetting.TitleText = payByCardTitleText.getText().toString();
+        payByCardGuiSetting.PayLoadingBarColor = payLoadingBarColorText.getText().toString();
 
         Boolean ok = storage.saveSubmitPaymentCardFormGuiSettingToStorage(payByCardGuiSetting);
         if (ok) {
@@ -434,10 +474,26 @@ public class DeveloperActivity extends AppCompatActivity {
     private void DisplayPayData() {
         // get payment data from shared preferences
         String readPayData = storage.getPayDataFromStorage();
+        EditText editText = (EditText) findViewById(R.id.payDataText);
         if (readPayData != null && !readPayData.isEmpty()) {
-            EditText editText = (EditText) findViewById(R.id.payDataText);
+
             editText.setText(readPayData);
         }
+
+        editText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                view.getParent().requestDisallowInterceptTouchEvent(true);
+                switch (motionEvent.getAction() & MotionEvent.ACTION_MASK){
+                    case MotionEvent.ACTION_UP:
+                        view.getParent().requestDisallowInterceptTouchEvent(false);
+                        return false;
+                }
+                return false;
+            }
+        });
+
+
     }
 
     private void DisplayCustomData() {

@@ -15,5 +15,6 @@ public class SubmitPaymentCardFormGuiSetting {
     //Color Hex Code ie. #00ff00
     public String SwitchButtonColor;
     public String PayByCardButtonColor;
+    public String PayLoadingBarColor;
 }
 

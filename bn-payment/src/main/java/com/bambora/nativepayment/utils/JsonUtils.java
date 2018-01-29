@@ -22,6 +22,7 @@
 
 package com.bambora.nativepayment.utils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,4 +42,5 @@ public class JsonUtils {
     public static JSONObject getJSONObjectIfExists(JSONObject jsonObject, String key) throws JSONException {
         return jsonObject.has(key) ? jsonObject.getJSONObject(key) : null;
     }
+
 }

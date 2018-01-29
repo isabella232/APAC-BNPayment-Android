@@ -22,13 +22,11 @@
 
 def artifactVersion = System.getenv('LIBRARY_VERSION') ?: ''
 
-publishing {
-    publications {
-        aar(MavenPublication) {
-            groupId = 'com.bambora.bnpayment'
-            artifactId 'bn-payment'
-            version = artifactVersion
-            artifact "${project.buildDir}/outputs/aar/${project.name}-release.aar"
-        }
+publishing.publications {
+    aar(MavenPublication) {
+        groupId = 'com.bambora.bnpayment'
+        artifactId 'bn-payment'
+        version = artifactVersion
+        artifact "${project.buildDir}/outputs/aar/${project.name}-release.aar"
     }
 }

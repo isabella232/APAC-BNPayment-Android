@@ -23,15 +23,20 @@
 package com.bambora.nativepayment.handlers;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.bambora.nativepayment.interfaces.ICardRegistrationCallback;
 import com.bambora.nativepayment.interfaces.ITransactionExtListener;
 import com.bambora.nativepayment.interfaces.ITransactionListener;
+import com.bambora.nativepayment.interfaces.VisaCheckoutDataCallback;
+import com.bambora.nativepayment.interfaces.VisaCheckoutTransactionCallback;
 import com.bambora.nativepayment.logging.BNLog;
 import com.bambora.nativepayment.managers.CertificateManager;
 import com.bambora.nativepayment.managers.CreditCardManager;
 import com.bambora.nativepayment.models.PaymentSettings;
 import com.bambora.nativepayment.models.PaymentType;
+import com.bambora.nativepayment.models.VisaCheckoutTransactionParams;
+import com.bambora.nativepayment.models.creditcard.CreditCard;
 import com.bambora.nativepayment.models.creditcard.RegistrationFormSettings;
 import com.bambora.nativepayment.models.creditcard.RegistrationParams;
 import com.bambora.nativepayment.network.ApiService;
@@ -41,11 +46,13 @@ import com.bambora.nativepayment.network.Request;
 import com.bambora.nativepayment.security.Crypto;
 import com.bambora.nativepayment.services.PaymentApiService;
 import com.bambora.nativepayment.services.PaymentApiService.PaymentService;
-
+import com.bambora.nativepayment.services.VisaCheckoutApiService;
+import com.bambora.nativepayment.services.VisaCheckoutApiService.VisaCheckoutService;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Constructor;
+import java.util.List;
 
 /**
  * {@link BNPaymentHandler} handles the responsibilities of managing the authentication and
@@ -78,10 +85,10 @@ public class BNPaymentHandler {
      */
     private String mMerchantAccount;
 
-    /**
-     * A boolean indicating whether setup is done.
-     */
-    private boolean mIsSetup;
+
+    public static final String sharedPreferencesKey= "Bambora_APAC_SDK";
+    public static final String existingMerchantAccountKey = "BamboraMerchantAccount";
+    public static final String existingBaseURLKey = "BamboraBaseURL";
 
     /**
      * A boolean indicating whether lib is in debug mode
@@ -124,20 +131,49 @@ public class BNPaymentHandler {
      * @param builder A builder class for {@link BNPaymentHandler}
      */
     public static void setupBNPayments(BNPaymentBuilder builder) {
-        if (!ourInstance.mIsSetup) {
             ourInstance.mBaseUrl = builder.baseUrl;
             ourInstance.mApiToken = builder.apiToken;
             ourInstance.mMerchantAccount = builder.merchantAccount;
             ourInstance.mDebug = builder.debug;
-            ourInstance.mIsSetup = true;
             if (ourInstance.mApiToken != null && !"".equals(ourInstance.mApiToken)) {
                 ourInstance.mHttpClient = new BNHttpClient(builder.context, builder.apiToken);
             } else {
                 ourInstance.mHttpClient = new BNHttpClient(builder.merchantAccount);
             }
             ourInstance.certificateManager.getEncryptionCertificates(builder.context, null);
-        }
+        ourInstance.checkMerchantAndEnvironment(ourInstance.mMerchantAccount,ourInstance.mBaseUrl,builder.context);
     }
+
+    private void checkMerchantAndEnvironment(String merchantAccount,String baseUrl,Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(sharedPreferencesKey, 0);
+        String existingMerchantAccount=sharedPreferences.getString(existingMerchantAccountKey, "");
+        String existingBaseURL=sharedPreferences.getString(existingBaseURLKey, "");
+        if(existingMerchantAccount.equalsIgnoreCase("") || existingBaseURL.equalsIgnoreCase(""))
+        {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(existingMerchantAccountKey, merchantAccount);
+            editor.putString(existingBaseURLKey, baseUrl);
+            editor.apply();
+        }
+        else if(!existingMerchantAccount.equalsIgnoreCase(merchantAccount) || !existingBaseURL.equalsIgnoreCase(baseUrl))
+        {
+            ourInstance.deleteAllCards(context);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(existingMerchantAccountKey, merchantAccount);
+            editor.putString(existingBaseURLKey, baseUrl);
+            editor.apply();
+        }
+
+
+    }
+
+    private void deleteAllCards(final Context context) {
+        creditCardManager.deleteAllCreditCards(context,null);
+    }
+
+
+
+
 
     /**
      * Initiates the hosted payment page for registering a credit card and returns the URL to the
@@ -324,6 +360,22 @@ public class BNPaymentHandler {
                     }
                 });
     }
+
+
+
+
+
+
+
+    public void getVisaCheckoutData(Context context, VisaCheckoutDataCallback callBack) {
+        VisaCheckoutService.getVisaCheckoutData(context,callBack);
+    }
+
+    public void processTransaction(Context context, VisaCheckoutTransactionParams visaCheckoutTransactionParams, VisaCheckoutTransactionCallback callBack) {
+        VisaCheckoutService.processTransaction(context,visaCheckoutTransactionParams,callBack);
+    }
+
+
 
     /**
      * Instantiates and initiates an {@link ApiService} with a base URL and a network client.

@@ -11,7 +11,8 @@ public enum SubmitPaymentCardFormGuiSettingEnum {
     ExpiryDateWatermark ("PayByCardFormExpiryDateWatermark"),
     SecurityCodeWatermark ("PayByCardFormSecurityCodeWatermark"),
     SwitchButtonColor("PayByCardSwitchButtonColor"),
-    PayByCardButtonColor ("PayByCardFormRegisterButtonColor");
+    PayByCardButtonColor ("PayByCardFormRegisterButtonColor"),
+    PayLoadingBarColor ("PayLoadingBarColor");
 
     private final String name;
 

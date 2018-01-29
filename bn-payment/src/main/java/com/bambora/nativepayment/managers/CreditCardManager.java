@@ -195,6 +195,33 @@ public class CreditCardManager {
         });
     }
 
+
+    public void deleteAllCreditCards(final Context context,final IOnCreditCardDeleted listener){
+
+        final IOnObjectSaved onObjectSavedListener = new IOnObjectSaved() {
+            @Override
+            public void notifyOnObjectSaved() {
+                if (listener != null) {
+                    listener.onCreditCardDeleted();
+                }
+            }
+        };
+
+        getCreditCards(context, new IOnCreditCardRead() {
+            @Override
+            public void onCreditCardRead(List<CreditCard> creditCards) {
+                creditCards.clear();
+                fileStorage.saveCreditCards(context, toArray(creditCards), onObjectSavedListener);
+            }
+        });
+
+    }
+
+
+
+
+
+
     /**
      * Updates credit card alias for card with given token.
      * @param context   App Context object

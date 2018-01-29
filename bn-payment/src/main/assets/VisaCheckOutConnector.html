@@ -1,0 +1,50 @@
+<html>
+<head>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0,
+user-scalable=no" />
+    <script type="text/javascript">
+
+        function onVisaCheckoutReady(){
+            V.init( {
+                apikey:'%s',
+                externalClientId:'%s',
+                externalProfileId:'%s',
+                paymentRequest:{
+                    currencyCode:'%s',
+                    subtotal:'%s',
+                    total:'%s'
+                },
+                settings:{
+                    locale: '%s',
+                    shipping: {collectShipping: '%s'},
+                    review: {message: '%s', buttonAction: '%s'}
+                }
+            }
+            );
+
+            V.on("payment.success", function(payment)
+            {
+               visaCheckoutCallBack.Success(JSON.stringify(payment))
+            });
+
+            V.on("payment.cancel", function(payment)
+            {
+               visaCheckoutCallBack.Cancel(JSON.stringify(payment))
+            });
+
+            V.on("payment.error", function(payment, error)
+            {
+               visaCheckoutCallBack.Error(JSON.stringify(error))
+            });
+
+        }
+    </script>
+</head>
+
+<body style="background-color:white" marginleft="auto" marginright="auto" marginheight="0px">
+<img alt="Visa Checkout" class="v-button" role="button" width="100%%" height="auto" src='%s'/>
+<script type="text/javascript" src='%s'>
+</script>
+</body>
+</html>
