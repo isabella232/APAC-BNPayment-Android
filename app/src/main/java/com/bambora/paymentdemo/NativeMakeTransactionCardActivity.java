@@ -83,6 +83,7 @@ public class NativeMakeTransactionCardActivity extends AppCompatActivity impleme
         JSONObject paymentJsonData = getJsonPayData();
         //setup merchant specific payment data.
         paymentSettings.paymentJsonData = paymentJsonData;
+        paymentSettings.enableVisaCheckout = storage.getVisaCheckoutStatus();
         String paymentId = "test-card-payment-" + new Date().getTime();
         transactionCardForm.setTransactionParams(paymentSettings, paymentId);
 

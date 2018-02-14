@@ -132,12 +132,13 @@ public class TransactionCardFormLayout extends RelativeLayout implements IOnVali
     {
         this.paymentId = paymentId;
         this.paymentSettings = paymentSettings;
-        if(hasVisaCheckoutSDK())
+        if(paymentSettings.enableVisaCheckout && hasVisaCheckoutSDK())
         {
             launchVisaCheckOut();
         }
         else
         {
+            or_UI.setVisibility(View.GONE);
             visaCheckoutLayout.setVisibility(View.GONE);
         }
     }

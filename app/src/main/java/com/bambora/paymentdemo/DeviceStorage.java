@@ -22,6 +22,7 @@ public class DeviceStorage {
     private SharedPreferences settings;
     private Context context;
     public static final String ENVIRONMENT_NAME = "EnvironmentStore";
+    public static final String VISACHECKOUT_STATUS = "VisaCheckoutStatus";
     public static final String REGISTRATION_DATA_NAME = "RegistrationDataStore";
     public static final String PAYMENT_DATA_NAME = "PaymentDataStore";
 
@@ -204,6 +205,17 @@ public class DeviceStorage {
         }
         return ok;
     }
+
+    public boolean getVisaCheckoutStatus() {
+        return settings.getBoolean(VISACHECKOUT_STATUS, false);
+    }
+
+    public void setVisaCheckoutStatus(Boolean enable) {
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(VISACHECKOUT_STATUS, enable);
+            editor.commit();
+    }
+
 
     /********************************* Custom Data ****************************************************/
 

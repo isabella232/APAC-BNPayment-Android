@@ -9,9 +9,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.bambora.nativepayment.handlers.BNPaymentHandler;
@@ -55,6 +57,7 @@ public class DeveloperActivity extends AppCompatActivity {
     private EditText payByCardButtonColorText;
     private EditText payByCardButtonText;
     private EditText payLoadingBarColorText;
+    private Switch visaCheckoutSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +84,7 @@ public class DeveloperActivity extends AppCompatActivity {
         payByCardButtonColorText = (EditText) findViewById(R.id.payByCardButtonColorText);
         payByCardButtonText = (EditText) findViewById(R.id.payByCardButtonText);
         payLoadingBarColorText = (EditText) findViewById(R.id.payLoadingBarColorText);
+        visaCheckoutSwitch = (Switch) findViewById(R.id.vco_switch);
 
         ProcessEnvironmentSettings();
         //init registration from gui setting;
@@ -186,6 +190,14 @@ public class DeveloperActivity extends AppCompatActivity {
         // Setup listener for radio group
         RadioGroup rGroup = (RadioGroup)findViewById(R.id.radioGroup);
         rGroup.setOnCheckedChangeListener(envRadioGroupListener);
+
+        visaCheckoutSwitch.setChecked(storage.getVisaCheckoutStatus());
+        visaCheckoutSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                  @Override
+                  public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                      storage.setVisaCheckoutStatus(isChecked);
+                     }});
+
     }
 
     private void DisplayCurrentMerchantID() {
