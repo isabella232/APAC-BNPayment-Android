@@ -12,7 +12,10 @@
     android:layout_height="match_parent"
     tools:context="com.bambora.paymentdemo.DeveloperActivity"
     tools:layout_editor_absoluteY="81dp"
-    tools:layout_editor_absoluteX="0dp">
+    tools:layout_editor_absoluteX="0dp"
+    android:focusable="true"
+        android:focusableInTouchMode="true"
+        >
 
      <TextView
             android:id="@+id/BuildLabel"
@@ -646,10 +649,54 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="-27dp" />
+        <TextView
+            android:id="@+id/loadingBarColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="10dp"
+            android:text="LoadingBar Color"
+            android:textColor="@color/bn_purple"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/payByCardSwitchButtonColorText"
+            android:layout_marginStart="16dp" />
+        <EditText
+            android:id="@+id/payLoadingBarColorText"
+            android:layout_width="wrap_content"
+            android:layout_height="41dp"
+            android:layout_marginTop="-60dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:textColor="@color/bn_purple"
+            app:layout_constraintRight_toRightOf="@+id/registrationFormTitleText"
+            app:layout_constraintTop_toBottomOf="@+id/payByCardSwitchButtonColorText"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="-27dp" />
 
 
+        <TextView
+            android:id="@+id/VCO"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="15dp"
+            android:text="Visa Checkout"
+            android:textColor="@color/bn_purple"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/payLoadingBarColorText"
+            />
 
 
+        <Switch
+            android:id="@+id/vco_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toRightOf="@+id/VCO"
+            app:layout_constraintBottom_toBottomOf="@+id/VCO"
+            app:layout_constraintTop_toTopOf="@+id/VCO"
+            android:layout_marginLeft="20dp"
+            />
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

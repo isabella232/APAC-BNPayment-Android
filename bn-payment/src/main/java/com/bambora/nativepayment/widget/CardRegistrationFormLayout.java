@@ -31,6 +31,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -38,6 +39,8 @@ import com.bambora.nativepayment.R;
 import com.bambora.nativepayment.handlers.BNPaymentHandler;
 import com.bambora.nativepayment.interfaces.ICardRegistrationCallback;
 import com.bambora.nativepayment.models.CardRegistrationFormGuiSetting;
+import com.bambora.nativepayment.models.creditcard.CreditCard;
+import com.bambora.nativepayment.network.RequestError;
 import com.bambora.nativepayment.utils.CompatHelper;
 import com.bambora.nativepayment.widget.edittext.CardFormEditText;
 import com.bambora.nativepayment.widget.edittext.CardFormEditText.IOnValidationEventListener;
@@ -51,10 +54,10 @@ import java.util.Map;
 /**
  * TODO
  */
-public class CardRegistrationFormLayout extends RelativeLayout implements IOnValidationEventListener {
+public class CardRegistrationFormLayout extends RelativeLayout implements IOnValidationEventListener,ICardRegistrationCallback {
 
-    private ICardRegistrationCallback resultListener;
-
+    private ICardRegistrationCallback resultListenerForInternal;
+    private ICardRegistrationCallback resultListenerForExternal;
     private TextView pageTitle;
     private CardHolderEditText cardHolderEditText;
     private CardNumberEditText cardNumberEditText;
@@ -63,7 +66,7 @@ public class CardRegistrationFormLayout extends RelativeLayout implements IOnVal
     private Map<EditText, Boolean> inputValidStates = new HashMap<>();
     private Button registrationButton;
     private CardRegistrationFormGuiSetting registrationGuiSetting;
-
+    private ProgressBar progressBar;
     public CardRegistrationFormLayout(Context context) {
         super(context);
         setupView(context);
@@ -86,7 +89,7 @@ public class CardRegistrationFormLayout extends RelativeLayout implements IOnVal
     }
 
     public void setRegistrationResultListener(ICardRegistrationCallback resultListener) {
-        this.resultListener = resultListener;
+        this.resultListenerForExternal = resultListener;
     }
 
     public void setTitle(String title) {
@@ -137,7 +140,13 @@ public class CardRegistrationFormLayout extends RelativeLayout implements IOnVal
         inputValidStates.put(expiryDateEditText, false);
         inputValidStates.put(securityCodeEditText, true);
 
+        progressBar=new ProgressBar(context,null,android.R.attr.progressBarStyleLarge);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        this.addView(progressBar,params);
+        progressBar.setVisibility(View.INVISIBLE);
 
+        this.resultListenerForInternal = this;
     }
 
     private void viewCustomization()
@@ -170,13 +179,13 @@ public class CardRegistrationFormLayout extends RelativeLayout implements IOnVal
          //Register Button Text
         if(registrationButton!=null)
         {
-            if(registrationGuiSetting.RegisterButtonText.trim().length()>0 &&
+            if(registrationGuiSetting.RegisterButtonText!=null && registrationGuiSetting.RegisterButtonText.trim().length()>0 &&
                     registrationButton!=null)
             {
                registrationButton.setText(registrationGuiSetting.RegisterButtonText);
             }
             //Todo: More validation
-            if(registrationGuiSetting.RegisterButtonColor.trim().length()==7)
+            if(registrationGuiSetting.RegisterButtonColor!=null && registrationGuiSetting.RegisterButtonColor.trim().length()==7)
             {
                 int colorValue = Color.parseColor(registrationGuiSetting.RegisterButtonColor);
                 registrationButton.setBackgroundColor(colorValue);
@@ -242,9 +251,25 @@ public class CardRegistrationFormLayout extends RelativeLayout implements IOnVal
         registrationButton.setEnabled(enabled);
     }
 
+
+    private void startLoadingUI(){
+        registrationButton.setEnabled(false);
+        progressBar.setVisibility(View.VISIBLE);
+
+    }
+
+    private void stopLoadingUI(){
+        registrationButton.setEnabled(true);
+        updateButtonState();
+        progressBar.setVisibility(View.INVISIBLE);
+
+    }
+
+
     private OnClickListener onRegisterButtonClickListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
+            startLoadingUI();
             BNPaymentHandler.getInstance().registerCreditCard(
                     getContext(),
                     cardHolderEditText.getText().toString(),
@@ -252,9 +277,23 @@ public class CardRegistrationFormLayout extends RelativeLayout implements IOnVal
                     expiryDateEditText.getEnteredExpiryMonth(),
                     expiryDateEditText.getEnteredExpiryYear(),
                     securityCodeEditText.getText().toString(),
-                    resultListener);
+                    resultListenerForInternal);
         }
     };
+
+
+    @Override
+    public void onRegistrationSuccess(CreditCard creditCard) {
+        stopLoadingUI();
+        resultListenerForExternal.onRegistrationSuccess(creditCard);
+    }
+
+    @Override
+    public void onRegistrationError(RequestError error) {
+        stopLoadingUI();
+        resultListenerForExternal.onRegistrationError(error);
+    }
+
 
 
 }

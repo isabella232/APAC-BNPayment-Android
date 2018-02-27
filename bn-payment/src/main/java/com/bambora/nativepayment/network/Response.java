@@ -22,6 +22,8 @@
 
 package com.bambora.nativepayment.network;
 
+import android.util.Log;
+
 import com.bambora.nativepayment.interfaces.IJsonResponse;
 import com.bambora.nativepayment.json.JsonContainer;
 import com.bambora.nativepayment.logging.BNLog;

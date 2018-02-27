@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -10,13 +10,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        >
 
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="7dp"
+            android:paddingBottom="8dp"
             android:paddingTop="10dp"
             android:text="Enter card details"
             style="@style/BN.HeaderText" />
@@ -26,7 +28,10 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="1dp"
-            android:background="@color/bn_lighter_grey">
+            android:background="@color/bn_lighter_grey"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            >
 
             <com.bambora.nativepayment.widget.edittext.CardHolderEditText
                 android:id="@+id/et_card_holder"
@@ -71,19 +76,17 @@
             android:layout_height="@dimen/bn_standard_item_height"
             android:orientation="horizontal"
             android:background="@android:color/white"
-            android:paddingTop="3dp">
+            android:paddingTop="10dp">
             <TextView
                 android:id="@+id/tv_save_card"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="7dp"
-                android:paddingTop="10dp"
-                android:paddingRight="5px"
+                android:gravity="center_vertical"
+                android:paddingRight="10dp"
                 android:text="Save Card"
                 style="@style/BN.HeaderText" />
             <ToggleButton
                 android:id="@+id/togg_is_save_card_btn"
-                android:layout_below="@+id/text6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/button_selector"
@@ -91,16 +94,79 @@
                 android:gravity="center"
                 />
         </LinearLayout>
+
+
+
+
     </LinearLayout>
 
     <Button
         android:id="@+id/btn_register"
         android:layout_width="match_parent"
+        android:layout_marginTop="15dp"
         android:layout_height="@dimen/bn_standard_item_height"
-        android:layout_alignParentBottom="true"
         android:background="@drawable/button_selector"
         android:textColor="@drawable/white_disabled_color"
         android:enabled="false"
         android:text="Pay Once" />
 
-</RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/or_UI"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:orientation="horizontal"
+        android:weightSum="7"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        >
+
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="3"
+            android:background="@color/bn_purple"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:textColor="@color/bn_purple"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:text="OR" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="3"
+            android:background="@color/bn_purple"
+            android:gravity="center_vertical" />
+
+    </LinearLayout>
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/visa_checkout_layout"
+        android:paddingLeft="40dp"
+        android:paddingRight="40dp"
+        >
+
+        <com.bambora.nativepayment.widget.VisaCheckoutButton
+            android:id="@+id/visa_checkout_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+    </RelativeLayout>
+
+</LinearLayout>

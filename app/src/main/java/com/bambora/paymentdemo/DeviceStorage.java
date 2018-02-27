@@ -2,11 +2,16 @@ package com.bambora.paymentdemo;
 
 import android.content.SharedPreferences;
 import android.content.Context;
+import android.content.res.AssetManager;
+
 import com.bambora.nativepayment.logging.BNLog;
 import com.bambora.nativepayment.models.CardRegistrationFormGuiSetting;
 import com.bambora.nativepayment.models.CardRegistrationFormGuiSettingEnum;
 import com.bambora.nativepayment.models.SubmitPaymentCardFormGuiSetting;
 import com.bambora.nativepayment.models.SubmitPaymentCardFormGuiSettingEnum;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by pe010193 on 6/06/2017.
@@ -17,8 +22,13 @@ public class DeviceStorage {
     private SharedPreferences settings;
     private Context context;
     public static final String ENVIRONMENT_NAME = "EnvironmentStore";
+    public static final String VISACHECKOUT_STATUS = "VisaCheckoutStatus";
     public static final String REGISTRATION_DATA_NAME = "RegistrationDataStore";
     public static final String PAYMENT_DATA_NAME = "PaymentDataStore";
+
+    public static final String REGISTRATION_DATA_FILE_NAME = "RegistrationData.json";
+    public static final String PAYMENT_DATA_FILE_NAME = "PaymentData.json";
+    public static final String MERCHANTID_FILE_NAME = "MerchantID.txt";
 
     /**
      * Constructor
@@ -37,8 +47,14 @@ public class DeviceStorage {
      * @return the merchant id string, or empty string if it was empty or there was an error obtaining it.
      */
     public String getMerchantIdFromStorage(String storageKey) {
+
         try {
-            return settings.getString(storageKey, "");
+            String merchantIdString=settings.getString(storageKey, "");
+            if(merchantIdString.isEmpty())
+            {
+                merchantIdString=getDataFromFile(MERCHANTID_FILE_NAME);
+            }
+            return merchantIdString;
         } catch (Exception e) {
             BNLog.e(getClass().getSimpleName(), "Internal error; failed to get merchant id", e);
         }
@@ -128,6 +144,7 @@ public class DeviceStorage {
             editor.putString(SubmitPaymentCardFormGuiSettingEnum.SecurityCodeWatermark.toString(), guiSetting.SecurityCodeWatermark);
             editor.putString(SubmitPaymentCardFormGuiSettingEnum.SwitchButtonColor.toString(), guiSetting.SwitchButtonColor);
             editor.putString(SubmitPaymentCardFormGuiSettingEnum.PayByCardButtonColor.toString(), guiSetting.PayByCardButtonColor);
+            editor.putString(SubmitPaymentCardFormGuiSettingEnum.PayLoadingBarColor.toString(), guiSetting.PayLoadingBarColor);
             ok = editor.commit();
         } catch (Exception e) {
             BNLog.e(getClass().getSimpleName(), "Internal error; failed to SubmitPaymentCardFormGuiSetting", e);
@@ -150,6 +167,7 @@ public class DeviceStorage {
             payByCardGuiSetting.SecurityCodeWatermark =  settings.getString(SubmitPaymentCardFormGuiSettingEnum.SecurityCodeWatermark.toString(), "");
             payByCardGuiSetting.SwitchButtonColor =  settings.getString(SubmitPaymentCardFormGuiSettingEnum.SwitchButtonColor.toString(), "");
             payByCardGuiSetting.PayByCardButtonColor =  settings.getString(SubmitPaymentCardFormGuiSettingEnum.PayByCardButtonColor.toString(), "");
+            payByCardGuiSetting.PayLoadingBarColor =  settings.getString(SubmitPaymentCardFormGuiSettingEnum.PayLoadingBarColor.toString(), "");
         } catch (Exception e) {
             BNLog.e(getClass().getSimpleName(), "Internal error; failed to get SubmitPaymentCardFormGuiSetting", e);
         }
@@ -188,6 +206,17 @@ public class DeviceStorage {
         return ok;
     }
 
+    public boolean getVisaCheckoutStatus() {
+        return settings.getBoolean(VISACHECKOUT_STATUS, false);
+    }
+
+    public void setVisaCheckoutStatus(Boolean enable) {
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(VISACHECKOUT_STATUS, enable);
+            editor.commit();
+    }
+
+
     /********************************* Custom Data ****************************************************/
 
     /**
@@ -196,12 +225,42 @@ public class DeviceStorage {
      */
     public String getRegDataFromStorage() {
         try {
-            return settings.getString(REGISTRATION_DATA_NAME, "");
+            String regDataJsonString=settings.getString(REGISTRATION_DATA_NAME, "");
+            if(regDataJsonString.isEmpty())
+            {
+                regDataJsonString=getDataFromFile(REGISTRATION_DATA_FILE_NAME);
+            }
+            return regDataJsonString;
         } catch (Exception e) {
             BNLog.e(getClass().getSimpleName(), "Internal error; failed to get custom registration data", e);
         }
         return "";
     }
+
+
+
+    private String getDataFromFile(String fileName){
+
+        AssetManager am =  context.getResources().getAssets();
+        InputStream is = null;
+        try {
+            is = am.open(fileName);
+            int size = is.available();
+            byte buffer[] = new byte[size];
+            is.read(buffer);
+            String dataString=new String(buffer);
+            is.close();
+            return dataString;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "";
+
+    }
+
+
+
 
     /**
      * Saves the custom registration data to device storage.
@@ -226,7 +285,12 @@ public class DeviceStorage {
      */
     public String getPayDataFromStorage() {
         try {
-            return settings.getString(PAYMENT_DATA_NAME, "");
+            String payDataJsonString=settings.getString(PAYMENT_DATA_NAME, "");
+            if(payDataJsonString.isEmpty())
+            {
+                payDataJsonString=getDataFromFile(PAYMENT_DATA_FILE_NAME);
+            }
+            return payDataJsonString;
         } catch (Exception e) {
             BNLog.e(getClass().getSimpleName(), "Internal error; failed to get custom payment data", e);
         }

@@ -25,6 +25,7 @@ package com.bambora.nativepayment.network;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.bambora.nativepayment.interfaces.IJsonResponse;
 import com.bambora.nativepayment.logging.BNLog;
@@ -36,6 +37,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URLConnection;
+import java.util.concurrent.Executors;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -86,7 +88,7 @@ public class RequestExecutor<T extends IJsonResponse<T>> {
         processRequest(request, new HttpClient.IProcessRequestListener() {
             @Override
             public void onRequestProcessed() {
-                new DownloadJsonTask(request).execute();
+                new DownloadJsonTask(request).executeOnExecutor(Executors.newCachedThreadPool(),null);
             }
 
             @Override
@@ -143,8 +145,101 @@ public class RequestExecutor<T extends IJsonResponse<T>> {
 
         @Override
         protected Response<T> doInBackground(Void... params) {
+
+            // delete mock data later
+            if(request.getUrl().getPath().equalsIgnoreCase("/rapi/visacheckout_params"))
+            {
+                return mockVisaCheckParams();
+            }
+            else if(request.getUrl().getPath().equalsIgnoreCase("/rapi/visacheckout_transaction"))
+            {
+                return mockVisaCheckoutTransaction();
+            }
+            //
             return downloadJson();
         }
+
+        private Response<T> mockVisaCheckParams() {
+            Response<T> response = new Response<>();
+            HttpsURLConnection connection = null;
+            try {
+                connection = (HttpsURLConnection) request.getUrl().openConnection();
+                connection.setRequestMethod(request.getMethod());
+                addHttpHeader(connection, request.getHeader());
+                addRequestBody(connection, request.getRawBody());
+
+                response.setResponseCode(200);
+                response.header = new HttpHeader(request.getHeader());
+                String jsonBody="{\n" +
+                        "    \"apikey\": \"ZW06OP7C8MA8S1NM9J79136ZKOZs_hlr-SdJPOEax5Ri9eBb4\",\n" +
+                        "    \"currencyCode\": \"AUD\",\n" +
+                        "    \"externalClientId\": \"c182d487-d94b-4907-bd74-eaa107b05ec7\",\n" +
+                        "    \"externalProfileId\": \"IPPMerchant147942\",\n" +
+                        "    \"locale\": \"en_AU\",\n" +
+                        "    \"collectShipping\": \"true\",\n" +
+                        "    \"message\" : \"Click to Pay Now\",\n" +
+                        "    \"buttonAction\": \"Pay\",\n" +
+                        "    \"buttonImageUrl\": \"https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png\",\n" +
+                        "    \"jsLibraryUrl\" : \"https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js\"\n" +
+                        "}\n";
+                response.setBody(jsonBody, responseBodyClass);
+                Thread.sleep(1000);
+            } catch (IOException exception) {
+                response.error = new RequestError(exception);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                if (connection != null)
+                    connection.disconnect();
+            }
+            BNLog.requestResult(LOG_TAG, request, response);
+            return response;
+        }
+
+        private Response<T> mockVisaCheckoutTransaction() {
+            Response<T> response = new Response<>();
+            HttpsURLConnection connection = null;
+            try {
+                connection = (HttpsURLConnection) request.getUrl().openConnection();
+                connection.setRequestMethod(request.getMethod());
+                addHttpHeader(connection, request.getHeader());
+                addRequestBody(connection, request.getRawBody());
+
+                response.setResponseCode(200);
+                response.header = new HttpHeader(request.getHeader());
+                String jsonBody="{\n" +
+                        "    \"currency\": \"AUD\",\n" +
+                        "    \"operations\":\"\",\n" +
+                        "    \"payment\": \"217001832\",\n" +
+                        "    \"captures\": \"\",\n" +
+                        "    \"state\": \"\",\n" +
+                        "    \"region\": \"\",\n" +
+                        "    \"operationInProgress\": \"false\",\n" +
+                        "    \"amount\": 12000,\n" +
+                        "    \"refunds\" : \"\",\n" +
+                        "    \"comment\": \"\",\n" +
+                        "    \"merchant\": \"d7e4e8e4-8e44-4895-9731-c6031792e3a3\",\n" +
+                        "    \"receipt\": \"92055816\",\n" +
+                        "    \"cardType\": \"\",\n" +
+                        "    \"creditCardToken\": \"\",\n" +
+                        "    \"cardHolderName\" : \"Mark\",\n" +
+                        "    \"truncatedCard\": \"\"\n" +
+                        "}\n";
+
+                response.setBody(jsonBody, responseBodyClass);
+                Thread.sleep(3000);
+            } catch (IOException exception) {
+                response.error = new RequestError(exception);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                if (connection != null)
+                    connection.disconnect();
+            }
+            BNLog.requestResult(LOG_TAG, request, response);
+            return response;
+        }
+
 
         @Override
         protected void onPostExecute(Response<T> response) {
@@ -159,7 +254,6 @@ public class RequestExecutor<T extends IJsonResponse<T>> {
                 connection.setRequestMethod(request.getMethod());
                 addHttpHeader(connection, request.getHeader());
                 addRequestBody(connection, request.getRawBody());
-
                 connection.connect();
                 readErrorResponse(connection, response);
                 response.setResponseCode(connection.getResponseCode());

@@ -54,7 +54,7 @@ public class PaymentSettings implements IJsonRequest {
     public String cvcCode;
     public JSONObject paymentJsonData;
     public JSONObject cardPaymentJsonData;
-
+    public Boolean enableVisaCheckout=false;
     public PaymentType.PaymentTypeEnum paymentType;
     //NOTE:
     // If 'comment' is null it will not be serialised => {"amount":100,"token":"92699060984307713","currency":"SEK"}

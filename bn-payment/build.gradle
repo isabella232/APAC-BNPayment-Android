@@ -1,16 +1,21 @@
-plugins {
-  id "org.sonarqube" version "2.0.1"
-}
 
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
+version = "1.1.3"
+
+def siteUrl = 'http://bambora.com/en/au'
+def gitUrl = 'https://github.com/bambora/APAC-BNPayment-Android.git'
+
+group = "com.bambora.apac"
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
-
+    compileSdkVersion 27
+    buildToolsVersion '26.0.2'
     defaultConfig {
-        minSdkVersion 10
-        targetSdkVersion 23
+        minSdkVersion 16
+        targetSdkVersion 27
         versionCode = System.getenv("BUILD_NUMBER") as Integer ?: 0
         versionName System.getenv("LIBRARY_VERSION") ?: '0.0.0'
     }
@@ -23,21 +28,84 @@ android {
             testCoverageEnabled true
         }
     }
+    productFlavors {
+    }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:23.3.0'
-
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:appcompat-v7:27.0.2'
     testCompile 'commons-codec:commons-codec:1.9'
     compile 'commons-codec:commons-codec:1.9'
-    testCompile 'junit:junit:4.+'
-    androidTestCompile 'junit:junit:4+'
-    androidTestCompile 'com.android.support.test:runner:0.4'
+    testCompile 'junit:junit:4.12'
+    androidTestCompile 'junit:junit:4.12'
+    androidTestCompile 'com.android.support.test:runner:1.0.1'
     androidTestCompile 'org.mockito:mockito-core:1.10.19'
-    androidTestCompile "com.google.dexmaker:dexmaker:1.2"
-    androidTestCompile "com.google.dexmaker:dexmaker-mockito:1.2"
+    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
+    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
+    provided project(':VisaCheckoutHybrid')
 }
 
-apply from: "sonar.gradle"
-apply from: "artifactory.gradle"
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                name 'The Mobile Payment SDK from Bambora (APAC) makes it simple to accept credit card payments in your app.'
+                url siteUrl
+                licenses {
+                    license {
+                        name 'MIT'
+                        url 'https://github.com/bambora/APAC-BNPayment-Android/blob/master/LICENSE'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'bnpayment'
+                        name 'APAC-BNPayment'
+                        email 'apac-mobile-sdk-maintainers@bambora.com'
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+    configurations = ['archives']
+    pkg {
+        repo = "APAC-BNPayment"
+        name = "bn-payment"
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ["MIT"]
+        publish = true
+    }
+}
+
