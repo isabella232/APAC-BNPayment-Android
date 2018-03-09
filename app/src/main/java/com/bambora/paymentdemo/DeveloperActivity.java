@@ -57,7 +57,14 @@ public class DeveloperActivity extends AppCompatActivity {
     private EditText payByCardButtonColorText;
     private EditText payByCardButtonText;
     private EditText payLoadingBarColorText;
+    private EditText cardIOColorText;
     private Switch visaCheckoutSwitch;
+    private Switch cardIOSwitch;
+    private EditText payAmount;
+
+    private EditText registrationCardIOColorText;
+    private Switch registrationCardIOSwitch;
+    private EditText registrationLoadingBarColorText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +80,9 @@ public class DeveloperActivity extends AppCompatActivity {
         securityCodeText = (EditText) findViewById(R.id.regiSecurityCodeText);
         buttonColorText = (EditText) findViewById(R.id.regiButtonColorText);
         buttonText = (EditText) findViewById(R.id.regiButtonText);
+        registrationCardIOColorText= (EditText) findViewById(R.id.registration_cardIOColorText);
+        registrationCardIOSwitch=(Switch) findViewById(R.id.registration_card_io_switch);
+        registrationLoadingBarColorText= (EditText) findViewById(R.id.registration_LoadingBarColorText);
 
         //init pay by card form components.
         payByCardTitleText = (EditText) findViewById(R.id.payByCardFormTitleText);
@@ -84,7 +94,12 @@ public class DeveloperActivity extends AppCompatActivity {
         payByCardButtonColorText = (EditText) findViewById(R.id.payByCardButtonColorText);
         payByCardButtonText = (EditText) findViewById(R.id.payByCardButtonText);
         payLoadingBarColorText = (EditText) findViewById(R.id.payLoadingBarColorText);
+        cardIOColorText= (EditText) findViewById(R.id.cardIOColorText);
         visaCheckoutSwitch = (Switch) findViewById(R.id.vco_switch);
+        cardIOSwitch = (Switch) findViewById(R.id.card_io_switch);
+        payAmount= (EditText) findViewById(R.id.amount);
+
+
 
         ProcessEnvironmentSettings();
         //init registration from gui setting;
@@ -197,7 +212,7 @@ public class DeveloperActivity extends AppCompatActivity {
                   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                       storage.setVisaCheckoutStatus(isChecked);
                      }});
-
+        payAmount.setText(String.valueOf(storage.getPayAmount()));
     }
 
     private void DisplayCurrentMerchantID() {
@@ -411,6 +426,9 @@ public class DeveloperActivity extends AppCompatActivity {
         cardNumberText.setText(regiGuiSetting.CardNumberWatermark);
         expiryDateText.setText(regiGuiSetting.ExpiryDateWatermark);
         buttonText.setText(regiGuiSetting.RegisterButtonText);
+        registrationLoadingBarColorText.setText(regiGuiSetting.LoadingBarColor);
+        registrationCardIOColorText.setText(regiGuiSetting.CardIOColorText);
+        registrationCardIOSwitch.setChecked(regiGuiSetting.CardIOEnable);
     }
 
     /**
@@ -426,7 +444,9 @@ public class DeveloperActivity extends AppCompatActivity {
         registrationGuiSetting.CardNumberWatermark = cardNumberText.getText().toString();
         registrationGuiSetting.ExpiryDateWatermark = expiryDateText.getText().toString();
         registrationGuiSetting.RegisterButtonText = buttonText.getText().toString();
-
+        registrationGuiSetting.LoadingBarColor = registrationLoadingBarColorText.getText().toString();
+        registrationGuiSetting.CardIOColorText = registrationCardIOColorText.getText().toString();
+        registrationGuiSetting.CardIOEnable = registrationCardIOSwitch.isChecked();
         Boolean ok = storage.saveRegistrationFormGuiSettingToStorage(registrationGuiSetting);
         if (ok) {
             showDialog("Success", "The registration form gui setting was successfully saved");
@@ -450,6 +470,8 @@ public class DeveloperActivity extends AppCompatActivity {
         payByCardSwitchButtonColorText.setText(payByCardGuiSetting.SwitchButtonColor);
         payByCardTitleText.setText(payByCardGuiSetting.TitleText);
         payLoadingBarColorText.setText(payByCardGuiSetting.PayLoadingBarColor);
+        cardIOColorText.setText(payByCardGuiSetting.CardIOColorText);
+        cardIOSwitch.setChecked(payByCardGuiSetting.CardIOEnable);
     }
 
     /**
@@ -467,7 +489,8 @@ public class DeveloperActivity extends AppCompatActivity {
         payByCardGuiSetting.SecurityCodeWatermark = payByCardSecurityCodeText.getText().toString();
         payByCardGuiSetting.TitleText = payByCardTitleText.getText().toString();
         payByCardGuiSetting.PayLoadingBarColor = payLoadingBarColorText.getText().toString();
-
+        payByCardGuiSetting.CardIOColorText = cardIOColorText.getText().toString();
+        payByCardGuiSetting.CardIOEnable = cardIOSwitch.isChecked();
         Boolean ok = storage.saveSubmitPaymentCardFormGuiSettingToStorage(payByCardGuiSetting);
         if (ok) {
             showDialog("Success", "The SubmitSinglePaymentCard form gui setting was successfully saved");
@@ -476,7 +499,21 @@ public class DeveloperActivity extends AppCompatActivity {
             BNLog.e(getClass().getSimpleName(), "There was an error in saving the SubmitSinglePaymentCard form gui setting");
             showDialog("Failure", "There was an error in saving the SubmitSinglePaymentCard form gui setting");
         }
-    }
+
+        try {
+            String amountString=payAmount.getText().toString();
+            if(!amountString.equalsIgnoreCase(""))
+            {
+                float numberValue = Float.parseFloat(amountString);
+                storage.setPayAmount(numberValue);
+            }
+
+        } catch (NumberFormatException e) {
+            showDialog("Failure", "Please input an valid amount");
+        }
+
+
+     }
 
 
 

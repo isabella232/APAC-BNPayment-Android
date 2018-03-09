@@ -426,6 +426,84 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="-27dp" />
 
+
+
+        <TextView
+            android:id="@+id/registration_loadingBarColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="10dp"
+            android:text="LoadingBar Color"
+            android:textColor="@color/bn_purple"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/regiButtonText"
+            android:layout_marginStart="16dp" />
+        <EditText
+            android:id="@+id/registration_LoadingBarColorText"
+            android:layout_width="wrap_content"
+            android:layout_height="41dp"
+            android:layout_marginTop="-60dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:textColor="@color/bn_purple"
+            app:layout_constraintRight_toRightOf="@+id/registrationFormTitleText"
+            app:layout_constraintTop_toBottomOf="@+id/regiButtonText"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="-27dp" />
+
+
+        <TextView
+            android:id="@+id/registration_card_io"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="15dp"
+            android:text="Card.IO"
+            android:textColor="@color/bn_purple"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/registration_LoadingBarColorText"
+            />
+
+
+        <Switch
+            android:id="@+id/registration_card_io_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toRightOf="@+id/registration_card_io"
+            app:layout_constraintBottom_toBottomOf="@+id/registration_card_io"
+            app:layout_constraintTop_toTopOf="@+id/registration_card_io"
+            android:layout_marginLeft="20dp"
+            />
+
+        <TextView
+            android:id="@+id/registration_cardIOColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="10dp"
+            android:text="Card.IO Color"
+            android:textColor="@color/bn_purple"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/registration_card_io_switch"
+            android:layout_marginStart="16dp" />
+        <EditText
+            android:id="@+id/registration_cardIOColorText"
+            android:layout_width="wrap_content"
+            android:layout_height="41dp"
+            android:layout_marginTop="-60dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:textColor="@color/bn_purple"
+            app:layout_constraintRight_toRightOf="@+id/registrationFormTitleText"
+            app:layout_constraintTop_toBottomOf="@+id/registration_card_io_switch"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="-27dp" />
+
+
+
         <TextView
             android:id="@+id/TextPayByCardTitle"
             android:layout_width="wrap_content"
@@ -435,7 +513,7 @@
             android:text="Pay By Card Customization"
             android:textColor="@color/bn_purple"
             android:layout_marginTop="34dp"
-            app:layout_constraintTop_toBottomOf="@+id/regiButtonText"
+            app:layout_constraintTop_toBottomOf="@+id/registration_cardIOColorText"
             app:layout_constraintLeft_toLeftOf="parent"
             android:layout_marginStart="16dp" />
         <Button
@@ -446,7 +524,7 @@
             android:layout_marginRight="16dp"
             android:onClick="SaveSubmitSinglePaymentCardFormCustomizationClickHandler"
             android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@+id/regiButtonText"
+            app:layout_constraintTop_toBottomOf="@+id/registration_cardIOColorText"
             android:text="Save"
             android:textColor="@color/bn_purple"
             android:textSize="12sp"
@@ -676,6 +754,54 @@
 
 
         <TextView
+            android:id="@+id/card_io"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="15dp"
+            android:text="Card.IO"
+            android:textColor="@color/bn_purple"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/payLoadingBarColorText"
+            />
+
+
+        <Switch
+            android:id="@+id/card_io_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toRightOf="@+id/card_io"
+            app:layout_constraintBottom_toBottomOf="@+id/card_io"
+            app:layout_constraintTop_toTopOf="@+id/card_io"
+            android:layout_marginLeft="20dp"
+            />
+
+        <TextView
+            android:id="@+id/cardIOColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="10dp"
+            android:text="Card.IO Color"
+            android:textColor="@color/bn_purple"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/card_io_switch"
+            android:layout_marginStart="16dp" />
+        <EditText
+            android:id="@+id/cardIOColorText"
+            android:layout_width="wrap_content"
+            android:layout_height="41dp"
+            android:layout_marginTop="-60dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:textColor="@color/bn_purple"
+            app:layout_constraintRight_toRightOf="@+id/registrationFormTitleText"
+            app:layout_constraintTop_toBottomOf="@+id/card_io_switch"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="-27dp" />
+
+        <TextView
             android:id="@+id/VCO"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -684,7 +810,7 @@
             android:text="Visa Checkout"
             android:textColor="@color/bn_purple"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/payLoadingBarColorText"
+            app:layout_constraintTop_toBottomOf="@+id/cardIOColorText"
             />
 
 
@@ -697,6 +823,36 @@
             app:layout_constraintTop_toTopOf="@+id/VCO"
             android:layout_marginLeft="20dp"
             />
+
+        <TextView
+            android:id="@+id/amount_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="15dp"
+            android:text="Amount"
+            android:textColor="@color/bn_purple"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/VCO"
+            />
+
+        <EditText
+            android:id="@+id/amount"
+            android:layout_width="wrap_content"
+            android:layout_height="41dp"
+            android:layout_marginTop="-60dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:textColor="@color/bn_purple"
+            app:layout_constraintLeft_toRightOf="@+id/amount_label"
+            app:layout_constraintBottom_toBottomOf="@+id/amount_label"
+            app:layout_constraintTop_toTopOf="@+id/amount_label"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="-27dp" />
+
+
+
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

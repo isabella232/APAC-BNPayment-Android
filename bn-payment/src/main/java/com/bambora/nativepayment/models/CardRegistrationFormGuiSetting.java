@@ -13,6 +13,9 @@ public class CardRegistrationFormGuiSetting {
     public String SecurityCodeWatermark;
     //Color Hex Code ie. #00ff00
     public String RegisterButtonColor;
+    public String LoadingBarColor;
+    public String CardIOColorText;
+    public Boolean CardIOEnable;
 }
 
 

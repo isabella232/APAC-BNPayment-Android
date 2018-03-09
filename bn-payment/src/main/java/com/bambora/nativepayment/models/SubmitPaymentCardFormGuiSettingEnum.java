@@ -12,8 +12,9 @@ public enum SubmitPaymentCardFormGuiSettingEnum {
     SecurityCodeWatermark ("PayByCardFormSecurityCodeWatermark"),
     SwitchButtonColor("PayByCardSwitchButtonColor"),
     PayByCardButtonColor ("PayByCardFormRegisterButtonColor"),
-    PayLoadingBarColor ("PayLoadingBarColor");
-
+    PayLoadingBarColor ("PayLoadingBarColor"),
+    CardIOColorText ("CardIOColorText"),
+    CardIOEnable ("CardIOColorEnable");
     private final String name;
 
     SubmitPaymentCardFormGuiSettingEnum(String s) {

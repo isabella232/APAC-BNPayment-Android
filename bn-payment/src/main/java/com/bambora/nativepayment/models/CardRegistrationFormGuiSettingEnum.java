@@ -10,7 +10,10 @@ public enum CardRegistrationFormGuiSettingEnum {
     CardNumberWatermark ("RegistrationFormCardNumberWatermark"),
     ExpiryDateWatermark ("RegistrationFormExpiryDateWatermark"),
     SecurityCodeWatermark ("RegistrationFormSecurityCodeWatermark"),
-    RegisterButtonColor ("RegistrationFormRegisterButtonColor");
+    RegisterButtonColor ("RegistrationFormRegisterButtonColor"),
+    LoadingBarColor ("LoadingBarColor"),
+    CardIOColorText ("CardIOColorText"),
+    CardIOEnable ("CardIOColorEnable");
 
     private final String name;
 

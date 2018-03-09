@@ -23,6 +23,8 @@ public class DeviceStorage {
     private Context context;
     public static final String ENVIRONMENT_NAME = "EnvironmentStore";
     public static final String VISACHECKOUT_STATUS = "VisaCheckoutStatus";
+    public static final String CARD_IO_STATUS = "CardIOStatus";
+    public static final String PAY_AMOUNT = "PayAmount";
     public static final String REGISTRATION_DATA_NAME = "RegistrationDataStore";
     public static final String PAYMENT_DATA_NAME = "PaymentDataStore";
 
@@ -97,6 +99,9 @@ public class DeviceStorage {
             editor.putString(CardRegistrationFormGuiSettingEnum.ExpiryDateWatermark.toString(), guiSetting.ExpiryDateWatermark);
             editor.putString(CardRegistrationFormGuiSettingEnum.SecurityCodeWatermark.toString(), guiSetting.SecurityCodeWatermark);
             editor.putString(CardRegistrationFormGuiSettingEnum.RegisterButtonColor.toString(), guiSetting.RegisterButtonColor);
+            editor.putString(CardRegistrationFormGuiSettingEnum.LoadingBarColor.toString(), guiSetting.LoadingBarColor);
+            editor.putString(CardRegistrationFormGuiSettingEnum.CardIOColorText.toString(), guiSetting.CardIOColorText);
+            editor.putBoolean(CardRegistrationFormGuiSettingEnum.CardIOEnable.toString(), guiSetting.CardIOEnable);
             ok = editor.commit();
         } catch (Exception e) {
             BNLog.e(getClass().getSimpleName(), "Internal error; failed to CardRegistrationFormGuiSetting", e);
@@ -118,6 +123,9 @@ public class DeviceStorage {
             regiGuiSetting.ExpiryDateWatermark =  settings.getString(CardRegistrationFormGuiSettingEnum.ExpiryDateWatermark.toString(), "");
             regiGuiSetting.SecurityCodeWatermark =  settings.getString(CardRegistrationFormGuiSettingEnum.SecurityCodeWatermark.toString(), "");
             regiGuiSetting.RegisterButtonColor =  settings.getString(CardRegistrationFormGuiSettingEnum.RegisterButtonColor.toString(), "");
+            regiGuiSetting.LoadingBarColor =  settings.getString(CardRegistrationFormGuiSettingEnum.LoadingBarColor.toString(), "");
+            regiGuiSetting.CardIOColorText =  settings.getString(CardRegistrationFormGuiSettingEnum.CardIOColorText.toString(), "");
+            regiGuiSetting.CardIOEnable =  settings.getBoolean(CardRegistrationFormGuiSettingEnum.CardIOEnable.toString(), true);
         } catch (Exception e) {
             BNLog.e(getClass().getSimpleName(), "Internal error; failed to get CardRegistrationFormGuiSetting", e);
         }
@@ -145,6 +153,8 @@ public class DeviceStorage {
             editor.putString(SubmitPaymentCardFormGuiSettingEnum.SwitchButtonColor.toString(), guiSetting.SwitchButtonColor);
             editor.putString(SubmitPaymentCardFormGuiSettingEnum.PayByCardButtonColor.toString(), guiSetting.PayByCardButtonColor);
             editor.putString(SubmitPaymentCardFormGuiSettingEnum.PayLoadingBarColor.toString(), guiSetting.PayLoadingBarColor);
+            editor.putString(SubmitPaymentCardFormGuiSettingEnum.CardIOColorText.toString(), guiSetting.CardIOColorText);
+            editor.putBoolean(SubmitPaymentCardFormGuiSettingEnum.CardIOEnable.toString(), guiSetting.CardIOEnable);
             ok = editor.commit();
         } catch (Exception e) {
             BNLog.e(getClass().getSimpleName(), "Internal error; failed to SubmitPaymentCardFormGuiSetting", e);
@@ -168,6 +178,8 @@ public class DeviceStorage {
             payByCardGuiSetting.SwitchButtonColor =  settings.getString(SubmitPaymentCardFormGuiSettingEnum.SwitchButtonColor.toString(), "");
             payByCardGuiSetting.PayByCardButtonColor =  settings.getString(SubmitPaymentCardFormGuiSettingEnum.PayByCardButtonColor.toString(), "");
             payByCardGuiSetting.PayLoadingBarColor =  settings.getString(SubmitPaymentCardFormGuiSettingEnum.PayLoadingBarColor.toString(), "");
+            payByCardGuiSetting.CardIOColorText =  settings.getString(SubmitPaymentCardFormGuiSettingEnum.CardIOColorText.toString(), "");
+            payByCardGuiSetting.CardIOEnable =  settings.getBoolean(SubmitPaymentCardFormGuiSettingEnum.CardIOEnable.toString(), true);
         } catch (Exception e) {
             BNLog.e(getClass().getSimpleName(), "Internal error; failed to get SubmitPaymentCardFormGuiSetting", e);
         }
@@ -215,6 +227,21 @@ public class DeviceStorage {
             editor.putBoolean(VISACHECKOUT_STATUS, enable);
             editor.commit();
     }
+
+
+    public float getPayAmount() {
+        return settings.getFloat(PAY_AMOUNT,100);
+    }
+
+    public void setPayAmount(float amount) {
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putFloat(PAY_AMOUNT, amount);
+        editor.commit();
+    }
+
+
+
+
 
 
     /********************************* Custom Data ****************************************************/
