@@ -231,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
         startLoadingUI(makeTransactionButton);
         String paymentId = "test-payment-token-" + new Date().getTime();
         PaymentSettings paymentSettings = new PaymentSettings();
-        paymentSettings.amount = 200;
+        paymentSettings.amount = (int)(storage.getPayAmount()*100);
         paymentSettings.comment = "This is a test transaction by token.";
         paymentSettings.creditCardToken = creditCard.getCreditCardToken();
         paymentSettings.currency = "AUD";
@@ -264,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
         startLoadingUI(submitPreAuthTokenButton);
         String paymentId = "test-pre-auth-token-" + new Date().getTime();
         PaymentSettings paymentSettings = new PaymentSettings();
-        paymentSettings.amount = 100;
+        paymentSettings.amount = (int)(storage.getPayAmount()*100);
         paymentSettings.comment = "This is a test token PreAuth.";
         paymentSettings.creditCardToken = creditCard.getCreditCardToken();
         paymentSettings.currency = "AUD";
@@ -431,7 +431,7 @@ public class MainActivity extends AppCompatActivity {
     private void testSdkApiPayCard() {
         testSdkApiPayCardFinish=false;
         PaymentSettings paymentSettings = new PaymentSettings();
-        paymentSettings.amount = 100;
+        paymentSettings.amount = (int)(storage.getPayAmount()*100);
         paymentSettings.comment = "This is a test payment of $1";
         paymentSettings.currency = "AUD";
         JSONObject paymentJsonData = getJsonPayData();
@@ -480,7 +480,7 @@ public class MainActivity extends AppCompatActivity {
     private void testSdkApiPreAuthCard() {
         testSdkApiPreAuthCardFinish=false;
         PaymentSettings paymentSettings = new PaymentSettings();
-        paymentSettings.amount = 100;
+        paymentSettings.amount = (int)(storage.getPayAmount()*100);
         paymentSettings.comment = "This is a test preAuth of $1";
         paymentSettings.currency = "AUD";
         JSONObject paymentJsonData = getJsonPayData();

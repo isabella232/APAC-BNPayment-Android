@@ -16,5 +16,7 @@ public class SubmitPaymentCardFormGuiSetting {
     public String SwitchButtonColor;
     public String PayByCardButtonColor;
     public String PayLoadingBarColor;
+    public String CardIOColorText;
+    public Boolean CardIOEnable;
 }
 

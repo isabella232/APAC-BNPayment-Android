@@ -63,7 +63,7 @@ public class NativeMakeTransactionCardActivity extends AppCompatActivity impleme
         setContentView(R.layout.activity_native_transaction_card);
         TransactionCardFormLayout transactionCardForm = (TransactionCardFormLayout) findViewById(R.id.transaction_card_form);
         PaymentSettings paymentSettings = new PaymentSettings();
-        paymentSettings.amount = 200;
+        paymentSettings.amount = (int)(storage.getPayAmount()*100);
         paymentSettings.comment = "This is a pay by card transaction test.";
         paymentSettings.currency = "AUD";
         paymentSettings.cvcCode =  "123";
