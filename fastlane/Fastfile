@@ -147,7 +147,7 @@ platform :android do
     sh("cd #{destination} && git push")
     
     # Push tags
-    gradle = "#{destination}bn-payment/build.gradle"
+    gradle = "bn-payment/build.gradle"
     version_name = android_get_version_name(gradle_file: gradle)
     tag_name = "#{version_name}"
     sh("cd #{destination} && git tag #{tag_name} && git push origin #{tag_name}")
