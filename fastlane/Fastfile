@@ -165,6 +165,8 @@ platform :android do
   
   desc "Upload new version to JCenter"
   lane :release_version do
+      destination = ENV['DESTINATION_PATH']
+      
       sh("cd #{destination} && ./gradlew bintrayUpload")
   end
 end

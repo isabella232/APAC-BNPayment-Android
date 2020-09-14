@@ -20,7 +20,7 @@ android {
         applicationId "com.bambora.paymentdemo"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 8
+        versionCode 9
         versionName "1.1.9"
         buildConfigField "long", "TIMESTAMP", System.currentTimeMillis() + "L"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
