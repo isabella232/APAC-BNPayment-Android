@@ -24,9 +24,8 @@ package com.bambora.nativepayment.widget;
 
 import java.util.List;
 
-/**
- * TODO
- */
+//this static class is used for formatting the input of credit card number
+
 public class FormInputHelper {
 
     public static String clearNonDigits(String input) {

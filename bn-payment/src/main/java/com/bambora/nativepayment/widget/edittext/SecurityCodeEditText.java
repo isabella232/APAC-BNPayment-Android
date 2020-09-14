@@ -27,9 +27,6 @@ import android.util.AttributeSet;
 
 import com.bambora.nativepayment.widget.textwatcher.SecurityCodeTextWatcher;
 
-/**
- * TODO
- */
 public class SecurityCodeEditText extends CardFormEditText {
 
     private static final int MAX_LENGTH = 4;

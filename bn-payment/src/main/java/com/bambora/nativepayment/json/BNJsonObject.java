@@ -32,10 +32,7 @@ import org.json.JSONTokener;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
-
-/**
- * TODO
- */
+// this class is used as a customized JSONObject extension
 public class BNJsonObject extends JSONObject {
 
     private static final String LOG_TAG = "BNJsonObject";
@@ -44,20 +41,8 @@ public class BNJsonObject extends JSONObject {
         super();
     }
 
-    public BNJsonObject(Map copyFrom) {
-        super(copyFrom);
-    }
-
-    public BNJsonObject(JSONTokener readFrom) throws JSONException {
-        super(readFrom);
-    }
-
     public BNJsonObject(String json) throws JSONException {
         super(json);
-    }
-
-    public BNJsonObject(JSONObject copyFrom, String[] names) throws JSONException {
-        super(copyFrom, names);
     }
 
     public static BNJsonObject copyFrom(JSONObject jsonObject) {

@@ -35,10 +35,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Iterator;
-
-/**
- * TODO
- */
+//this static class is used for obtaining certificate form local and parse strings into certificates
 public class CertificateUtils {
 
     public static final String CERT_TYPE_X509 = "X.509";

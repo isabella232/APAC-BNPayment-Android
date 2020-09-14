@@ -1,9 +1,9 @@
 package com.bambora.nativepayment.utils;
 
-import android.support.test.runner.AndroidJUnit4;
-import android.test.InstrumentationTestCase;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Assert;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.text.ParseException;
@@ -11,12 +11,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * TODO
- */
 @RunWith(AndroidJUnit4.class)
-public class InstrumentationTestDateUtils extends InstrumentationTestCase {
+public class InstrumentationTestDateUtils {
 
+    @Test
     public void testParseISO8601DateString() throws ParseException {
         Map<String, Long> timeTestValues = new HashMap<>();
         timeTestValues.put("2016-05-17T12:00:00Z", 1463486400000L); // String to parse, time value

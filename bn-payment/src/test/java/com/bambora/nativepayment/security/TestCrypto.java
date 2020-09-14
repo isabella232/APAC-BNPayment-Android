@@ -16,9 +16,6 @@ import java.security.PublicKey;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-/**
- * TODO
- */
 public class TestCrypto {
 
     private static final String STRING_TO_ENCRYPT = "String to encrypt";

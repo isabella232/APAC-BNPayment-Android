@@ -1,0 +1,20 @@
+{
+    "avd_list":
+    [
+        {
+          "avd_name": "ci_emulator",
+
+          "create_avd_package": "system-images;android-29;google_apis_playstore;x86_64",
+          "create_avd_device": "pixel_xl",
+          "create_avd_tag": "google_apis_playstore",
+          "create_avd_abi": "x86_64",
+          "create_avd_additional_options": "",
+          "create_avd_hardware_config_filepath": "",
+
+          "launch_avd_port": "",
+          "launch_avd_snapshot_filepath": "",
+          "launch_avd_launch_binary_name": "emulator",
+          "launch_avd_additional_options": "-gpu on -no-boot-anim -no-window -no-snapshot"
+        }
+    ]
+}

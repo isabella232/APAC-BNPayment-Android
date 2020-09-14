@@ -9,9 +9,6 @@ import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 
-/**
- * TODO
- */
 public class TestCertificateManager {
 
     @Test

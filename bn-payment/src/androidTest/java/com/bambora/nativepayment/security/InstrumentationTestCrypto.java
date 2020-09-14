@@ -1,11 +1,12 @@
 package com.bambora.nativepayment.security;
 
-import android.support.test.runner.AndroidJUnit4;
-import android.test.InstrumentationTestCase;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.bambora.nativepayment.utils.CertificateUtils;
 
 import org.junit.Assert;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.UnsupportedEncodingException;
@@ -15,16 +16,14 @@ import java.security.PublicKey;
 
 import javax.crypto.Cipher;
 
-/**
- * TODO
- */
 @RunWith(AndroidJUnit4.class)
-public class InstrumentationTestCrypto extends InstrumentationTestCase {
+public class InstrumentationTestCrypto {
 
     private Crypto crypto = new Crypto();
 
+    @Test
     public void testRSAEncryptShouldHavePKCS1Padding() throws Exception {
-        KeyPair rsaKeyPair = InstrumentationTestData.getKeyPairFromRSAKeystore(getInstrumentation().getContext());
+        KeyPair rsaKeyPair = InstrumentationTestData.getKeyPairFromRSAKeystore(InstrumentationRegistry.getInstrumentation().getContext());
         PrivateKey rsaPrivateKey = rsaKeyPair.getPrivate();
         PublicKey rsaPublicKey = CertificateUtils.parseCertificate(InstrumentationTestData.getCertificateFromString()).getPublicKey();
         String stringToEncrypt = "String to encrypt";

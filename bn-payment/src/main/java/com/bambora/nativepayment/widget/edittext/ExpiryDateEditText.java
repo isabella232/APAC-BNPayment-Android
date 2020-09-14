@@ -30,9 +30,6 @@ import android.util.AttributeSet;
 
 import com.bambora.nativepayment.widget.textwatcher.ExpiryDateTextWatcher;
 
-/**
- * TODO
- */
 public class ExpiryDateEditText extends CardFormEditText {
 
     private static final int MAX_LENGTH = 5;

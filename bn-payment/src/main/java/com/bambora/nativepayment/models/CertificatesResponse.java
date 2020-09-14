@@ -32,9 +32,6 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * TODO
- */
 public class CertificatesResponse implements IJsonResponse<CertificatesResponse> {
 
     List<EncryptionCertificate> certificates = new ArrayList<>();

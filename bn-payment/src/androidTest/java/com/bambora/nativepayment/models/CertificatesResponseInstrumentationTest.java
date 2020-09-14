@@ -1,7 +1,6 @@
 package com.bambora.nativepayment.models;
 
-import android.support.test.runner.AndroidJUnit4;
-import android.test.InstrumentationTestCase;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.bambora.nativepayment.json.JsonContainer;
 
@@ -10,20 +9,21 @@ import junit.framework.Assert;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
-/**
- * TODO
- */
 @RunWith(AndroidJUnit4.class)
-public class CertificatesResponseInstrumentationTest extends InstrumentationTestCase {
+public class CertificatesResponseInstrumentationTest {
 
     private CertificatesResponse certificatesResponse;
 
+    @Before
     public void setUp() {
         this.certificatesResponse = new CertificatesResponse();
     }
 
+    @Test
     public void testFromJsonWithEmptyJson() throws JSONException {
         // Given
         JsonContainer jsonContainer = new JsonContainer("{}");
@@ -37,6 +37,7 @@ public class CertificatesResponseInstrumentationTest extends InstrumentationTest
         }
     }
 
+    @Test
     public void testFromJsonWithInvalidJson() throws JSONException {
         // Given
         JSONArray invalidJsonArray = new JSONArray();
@@ -60,6 +61,7 @@ public class CertificatesResponseInstrumentationTest extends InstrumentationTest
         }
     }
 
+    @Test
     public void testFromJsonWithEmptyArray() {
         // Given
         JSONArray jsonArray = new JSONArray();
@@ -75,6 +77,7 @@ public class CertificatesResponseInstrumentationTest extends InstrumentationTest
         }
     }
 
+    @Test
     public void testFromJsonWithValidJsonArray() throws JSONException {
         // Given
         JSONArray jsonArray = new JSONArray();

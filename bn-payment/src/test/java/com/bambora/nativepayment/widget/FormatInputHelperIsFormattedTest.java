@@ -31,9 +31,6 @@ import org.junit.runners.Parameterized.Parameters;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * TODO
- */
 @RunWith(Parameterized.class)
 public class FormatInputHelperIsFormattedTest {
 
@@ -50,6 +47,7 @@ public class FormatInputHelperIsFormattedTest {
     @Parameters
     public static Iterable<Object[]> data() {
         return Arrays.asList(new Object[][] {
+                {"", Arrays.asList(), true},
                 {"", Arrays.asList(4, 4, 4, 4), true},
                 {" ", Arrays.asList(4, 4, 4, 4), false},
                 {"1 ", Arrays.asList(4, 4, 4, 4), false},

@@ -42,7 +42,7 @@ public class PaymentSettings implements IJsonRequest {
     private static final String KEY_CURRENCY = "currency";
     private static final String KEY_COMMENT = "comment";
     private static final String KEY_TOKEN = "token";
-    private static final String KEY_CVC_CODE = "cvcCode";
+
     private static final String KEY_PAYMENT_JSON_DATA= "paymentJsonData";
     private static final String KEY_CARD_PAYMENT_JSON_DATA= "cardJsonData";
     private String KEY_TRANSACTION_TYPE = "TrnType";
@@ -51,7 +51,6 @@ public class PaymentSettings implements IJsonRequest {
     public String currency;
     public String comment;
     public String creditCardToken;
-    public String cvcCode;
     public JSONObject paymentJsonData;
     public JSONObject cardPaymentJsonData;
     public Boolean enableVisaCheckout=false;
@@ -68,9 +67,7 @@ public class PaymentSettings implements IJsonRequest {
             jsonObject.put(KEY_CURRENCY, currency);
             jsonObject.put(KEY_COMMENT, comment);
             jsonObject.put(KEY_TOKEN, creditCardToken);
-            if (cvcCode != null) {
-                jsonObject.put(KEY_CVC_CODE, cvcCode);
-            }
+
             if (paymentJsonData != null) {
                 //set transaction type.
                 setTransactionType();

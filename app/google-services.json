@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "737983477354",
+    "firebase_url": "https://bamboraaumobilesdk.firebaseio.com",
+    "project_id": "bamboraaumobilesdk",
+    "storage_bucket": "bamboraaumobilesdk.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:737983477354:android:2c32a134854c6e59ca3c13",
+        "android_client_info": {
+          "package_name": "com.bambora.paymentdemo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "737983477354-0has68h20j2arb4qhi8irekcuitppq9j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgabQJ4-yDA9Zsd3KcmihwZBid0ahSYXg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "737983477354-0has68h20j2arb4qhi8irekcuitppq9j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,21 +1,51 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+
+def bKeyAlias = System.getenv("BAMBORA_ALIAS")
+if (!bKeyAlias) bKeyAlias = ""
+
+def bKeyPassword = System.getenv("BAMBORA_KEY_PASSWORD")
+if (!bKeyPassword) bKeyPassword = ""
+
+def bKeystoreFile = System.getenv("BAMBORA_FILE")
+if (!bKeystoreFile) bKeystoreFile = "../bambora.jks"
+
+def bKeystorePassword = System.getenv("BAMBORA_KEYSTORE_PASSWORD")
+if (!bKeystorePassword) bKeystorePassword = ""
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.2'
     defaultConfig {
         applicationId "com.bambora.paymentdemo"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode 6
+        versionName "1.1.9"
         buildConfigField "long", "TIMESTAMP", System.currentTimeMillis() + "L"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    } 
+
+    signingConfigs {
+        release {
+            keyAlias bKeyAlias
+            keyPassword bKeyPassword
+            storeFile file(bKeystoreFile)
+            storePassword bKeystorePassword
+        }
     }
+
     buildTypes {
         release {
             minifyEnabled false
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     productFlavors {
@@ -23,12 +53,16 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':bn-payment')
-    compile 'com.android.support:appcompat-v7:27.0.2'
-    compile 'com.android.support:design:27.0.2'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':bn-payment')
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation project(':VisaCheckoutHybrid')
+    implementation 'com.google.firebase:firebase-analytics:17.5.0'
+
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
 
 apply plugin: 'com.getkeepsafe.dexcount'

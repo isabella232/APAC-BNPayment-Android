@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-version = "1.1.6"
+version = "1.1.9"
 
 def siteUrl = 'http://bambora.com/en/au'
 def gitUrl = 'https://github.com/bambora/APAC-BNPayment-Android.git'
@@ -11,13 +11,14 @@ def gitUrl = 'https://github.com/bambora/APAC-BNPayment-Android.git'
 group = "com.bambora.apac"
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.2'
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 27
         versionCode = System.getenv("BUILD_NUMBER") as Integer ?: 0
-        versionName System.getenv("LIBRARY_VERSION") ?: '0.0.0'
+        versionName "1.1.9"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -33,18 +34,25 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:27.0.2'
-    testCompile 'commons-codec:commons-codec:1.9'
-    compile 'commons-codec:commons-codec:1.9'
-    testCompile 'junit:junit:4.12'
-    androidTestCompile 'junit:junit:4.12'
-    androidTestCompile 'com.android.support.test:runner:1.0.1'
-    androidTestCompile 'org.mockito:mockito-core:1.10.19'
-    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
-    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
-    provided project(':VisaCheckoutHybrid')
-    compile 'io.card:android-sdk:5.5.1'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'commons-codec:commons-codec:1.9'
+    implementation 'io.card:android-sdk:5.5.1'
+
+    compileOnly project(':VisaCheckoutHybrid')
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'commons-codec:commons-codec:1.9'
+    testImplementation 'org.json:json:20140107'
+    testImplementation 'org.mockito:mockito-core:2.28.2'
+
+    androidTestImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'org.mockito:mockito-core:2.28.2'
+    androidTestImplementation 'com.linkedin.dexmaker:dexmaker-mockito:2.25.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
 }
 
 install {
@@ -94,11 +102,9 @@ artifacts {
     archives sourcesJar
 }
 
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
 bintray {
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
+    user = System.getenv("BINTRAY_USER")
+    key = System.getenv("BINTRAY_API_KEY")
     configurations = ['archives']
     pkg {
         repo = "APAC-BNPayment"

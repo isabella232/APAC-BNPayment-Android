@@ -61,7 +61,12 @@ public class BNLog {
     }
 
     public static boolean debug() {
-        return BNPaymentHandler.getInstance().getDebug();
+        try {
+            Class.forName( "android.os.AsyncTask" );
+            return BNPaymentHandler.getInstance().getDebug();
+        } catch( ClassNotFoundException e ) {
+            return false;
+        }
     }
 
     public static void requestResult(String logTag, Request request, Response response) {

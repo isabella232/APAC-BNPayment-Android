@@ -2,9 +2,9 @@ package com.bambora.paymentdemo;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import com.bambora.nativepayment.handlers.BNPaymentHandler;
 import com.bambora.nativepayment.logging.BNLog;
-import com.bambora.nativepayment.managers.CreditCardManager;
 import com.bambora.nativepayment.models.CardRegistrationFormGuiSetting;
 import com.bambora.nativepayment.models.SubmitPaymentCardFormGuiSetting;
 import com.bambora.nativepayment.models.creditcard.CreditCard;
@@ -27,9 +26,7 @@ import com.bambora.paymentdemo.adapter.CardListAdapter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.regex.Pattern;
 
 public class DeveloperActivity extends AppCompatActivity {

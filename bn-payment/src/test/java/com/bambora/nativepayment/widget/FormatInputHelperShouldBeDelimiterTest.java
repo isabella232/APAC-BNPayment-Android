@@ -31,9 +31,6 @@ import org.junit.runners.Parameterized.Parameters;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * TODO
- */
 @RunWith(Parameterized.class)
 public class FormatInputHelperShouldBeDelimiterTest {
 

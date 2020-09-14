@@ -1,0 +1,170 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Checking Lint"
+  lane :check_lint do
+      gradle(task: "lint")
+  end
+
+  desc "Run tests with a Emulator"
+  lane :unit_test do
+    gradle_task = ENV['TEST_TASK']
+    automated_test_emulator_run(
+        AVD_setup_path: File.expand_path('../', __FILE__) + "/avd_config.json",
+        gradle_task: gradle_task
+      )
+  end
+
+  desc "Build App"
+  lane :build_and_distribute do
+      build_type = ENV['BUILD_TYPE']
+
+      # Build APK
+      gradle(task: "assemble",
+             build_type: build_type,
+             print_command: false)
+
+      upload_and_distribute
+  end
+
+  desc "Upload App to Firebase"
+  lane :upload_and_distribute do
+      app_id = ENV['FIREBASE_ID']
+      apk_path = "#{lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH]}"
+      
+      # Generate changelog
+      version_name = android_get_version_name
+      version_code = android_get_version_code
+      
+      command = 'cd .. && scripts/ChangelogWizard --no-version'
+      output = sh(command, log: true)
+      
+      changelog = "# v#{version_name}(#{version_code})\n#{output}"
+
+      # Distribute to firebase
+      firebase_app_distribution(
+            app: app_id,
+            apk_path: apk_path,
+            release_notes: changelog,
+            groups: ""
+        )
+        
+      # Bump version code
+      bump
+  end
+
+  desc "Bump Version"
+  lane :bump do
+      project_module = ENV['MODULE']
+      commit_tag = ENV['COMMIT_TAG']
+      branch = ENV['BRANCH']
+      
+      if project_module == "app"
+          gradle = "app/build.gradle"
+          version_name = android_get_version_name
+          version_code = android_get_version_code
+          
+          version_code = android_set_version_code(gradle_file: gradle)
+          
+          git_commit(path: [gradle], message: "[#{commit_tag}] Example App version increased to #{version_name}(#{version_code})")
+          
+#          push_tag(
+#            name: project_module,
+#            version: version_name,
+#            code: version_code
+#          )
+      elsif project_module == "sdk"
+          #TODO: Find a way to bump version or confirm if we can push new versions to JCenter with versionName
+#          gradle = "bn-payment/build.gradle"
+#          version_name = android_get_version_name(gradle_file: gradle)
+#          floatVersionName = version_name.to_f + 1.0
+#          version_name = android_set_version_name(version_name: floatVersionName.to_s,
+#                                                  gradle_file: gradle)
+#
+#          git_commit(path: [gradle], message: "[#{commit_tag}] SDK version increased to #{version_name}")
+      end
+      
+      push_to_git_remote(remote_branch: branch,
+                         tags: false)
+  end
+  
+  desc "Push Tag"
+  lane :push_tag do |input|
+    full_number = "#{input[:version]}.#{input[:code]}"
+    add_git_tag(grouping: "", tag: full_number)
+    push_git_tags(tag: full_number)
+  end
+  
+  desc "Sync to Github"
+  lane :sync_to_github do
+    repo = ENV['REPO']
+    destination = ENV['DESTINATION_PATH']
+    repo_name = ENV['REPO_NAME']
+    branch = ENV['BRANCH']
+    source = ENV['SOURCE_PATH']
+    
+    # Clone Repo
+    sh("git clone #{repo} #{destination}")
+    
+    # Checkout master
+    sh("cd #{destination} && git checkout #{branch}")
+    
+    # Sync current state to Githib Repo
+    sh("cd #{source} && rsync -rv --delete ./ #{destination} --exclude /.git/ --exclude .gitignore")
+    
+    # Ignore Secrets
+    sh("cd #{destination} && git update-index --assume-unchanged app/src/main/assets/MerchantID.txt")
+    
+    sh("cd #{destination} && git update-index --assume-unchanged app/src/main/assets/PaymentData.json")
+    
+    sh("cd #{destination} && git update-index --assume-unchanged app/src/main/assets/RegistrationData.json")
+    
+    # Stage all changes
+    sh("cd #{destination} && git add --all")
+    
+    # Get Changelog
+    changelog = sh("cd .. && scripts/ChangelogWizard --no-version")
+    
+    # Commit Changes
+    sh("cd #{destination} && git commit -m '#{changelog}'")
+    
+    # Push Changes
+    sh("cd #{destination} && git push")
+    
+    # Push tags
+    gradle = "#{destination}/bn-payment/build.gradle"
+    version_name = android_get_version_name(gradle_file: gradle)
+    tag_name = "#{version_name}"
+    sh("cd #{destination} && git tag #{tag_name} && git push origin #{tag_name}")
+    
+    # Check latest release tag and upload new version if needed
+#    uploadNewVersion = sh("cd .. && scripts/TagCheck").strip
+#
+#    if uploadNewVersion == 'true'
+        release_version
+#    end
+    
+    # Delete Repo
+    sh("rm -rf #{destination}")
+  end
+  
+  desc "Upload new version to JCenter"
+  lane :release_version do
+      sh("cd #{destination} && ./gradlew bintrayUpload")
+  end
+end

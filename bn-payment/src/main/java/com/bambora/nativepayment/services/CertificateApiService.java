@@ -36,9 +36,6 @@ import java.util.List;
 
 import static com.bambora.nativepayment.network.RequestMethod.GET;
 
-/**
- * TODO
- */
 public class CertificateApiService extends ApiService {
 
     /**

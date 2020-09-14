@@ -12,9 +12,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * TODO
- */
 public class TestEncryptionCertificate {
 
     private List<Certificate> masterCertificates;

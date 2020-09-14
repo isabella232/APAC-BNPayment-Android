@@ -60,21 +60,10 @@ public class TransactionFileStorage extends FileStorage {
         getObjectFromDisk(context, CREDIT_CARD_FILE_NAME, listener);
     }
 
-    /**
-     * TODO
-     * @param context
-     * @param listener
-     */
     public void getEncryptionCertificates(Context context, IOnObjectRead listener) {
         getObjectFromDisk(context, CERTIFICATES_FILE_NAME, listener);
     }
 
-    /**
-     * TODO
-     * @param context
-     * @param certificates
-     * @param listener
-     */
     public void saveEncryptionCertificates(Context context, EncryptionCertificate[] certificates,
                                            IOnObjectSaved listener) {
         saveObjectToDisk(context, CERTIFICATES_FILE_NAME, certificates, listener);

@@ -37,9 +37,6 @@ import com.bambora.nativepayment.widget.FormInputHelper;
 
 import java.util.regex.Pattern;
 
-/**
- * TODO
- */
 public abstract class CardFormEditText extends EditText implements CardInputValidator,
         OnFocusChangeListener {
 

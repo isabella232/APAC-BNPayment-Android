@@ -22,14 +22,16 @@
 
 package com.bambora.nativepayment.utils;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources.Theme;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 
-/**
- * TODO
- */
+import com.bambora.nativepayment.R;
+
 public class CompatHelper {
 
     public static Drawable getDrawable(Context context, int resId, Theme theme) {
@@ -47,4 +49,34 @@ public class CompatHelper {
             return context.getResources().getColor(resId);
         }
     }
+
+    public static int getCustomizedColor(Context context,String colorCode,String errorAlert){
+
+           if(colorCode!=null && colorCode.length()>0)
+           {
+               if(colorCode.matches("#[A-Fa-f0-9]{6}"))
+               {
+                   return Color.parseColor(colorCode);
+               }
+               else
+               {
+                   AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                   builder.setTitle("Error")
+                           .setMessage(errorAlert)
+                           .setCancelable(false)
+                           .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                               public void onClick(DialogInterface dialog, int id) {
+
+                               }
+                           });
+                   AlertDialog alertDialog=builder.create();
+                   alertDialog.show();
+                   return context.getResources().getColor(R.color.bn_purple);
+               }
+           }
+           else
+           {
+               return context.getResources().getColor(R.color.bn_purple);
+           }
+      }
 }

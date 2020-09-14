@@ -26,10 +26,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-
-/**
- * TODO
- */
+// this class is used as an internal json tool
 public class JsonContainer {
 
     private Object json;

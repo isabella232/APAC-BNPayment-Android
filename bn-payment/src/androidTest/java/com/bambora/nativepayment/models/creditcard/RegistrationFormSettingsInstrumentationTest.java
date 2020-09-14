@@ -22,16 +22,15 @@
 
 package com.bambora.nativepayment.models.creditcard;
 
-import android.test.InstrumentationTestCase;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Test cases for the {@link RegistrationFormSettings} model.
  */
-public class RegistrationFormSettingsInstrumentationTest extends InstrumentationTestCase {
+public class RegistrationFormSettingsInstrumentationTest {
 
     private static final String KEY_PLATFORM = "platform";
     private static final String KEY_CSS_URL = "cssurl";
@@ -42,6 +41,7 @@ public class RegistrationFormSettingsInstrumentationTest extends Instrumentation
     private static final String KEY_NAME = "name";
     private static final String KEY_PLACEHOLDER = "placeholder";
 
+    @Test
     public void testPlatformShouldBeSet() {
         // Given
         RegistrationFormSettings formSettings = new RegistrationFormSettings();
@@ -58,6 +58,7 @@ public class RegistrationFormSettingsInstrumentationTest extends Instrumentation
         }
     }
 
+    @Test
     public void testCssUrlShouldNotBeSetByDefault() {
         // Given
         RegistrationFormSettings formSettings = new RegistrationFormSettings();
@@ -80,6 +81,7 @@ public class RegistrationFormSettingsInstrumentationTest extends Instrumentation
         }
     }
 
+    @Test
     public void testCustomCssUrl() {
         // Given
         String customValue = "http://custom.url.com";
@@ -98,6 +100,7 @@ public class RegistrationFormSettingsInstrumentationTest extends Instrumentation
         }
     }
 
+    @Test
     public void testSubmitButtonShouldNotBeSetByDefault() {
         // Given
         RegistrationFormSettings formSettings = new RegistrationFormSettings();
@@ -120,6 +123,7 @@ public class RegistrationFormSettingsInstrumentationTest extends Instrumentation
         }
     }
 
+    @Test
     public void testCustomSubmitButton() {
         // Given
         String customValue = "Register here";
@@ -138,6 +142,7 @@ public class RegistrationFormSettingsInstrumentationTest extends Instrumentation
         }
     }
 
+    @Test
     public void testDefaultCardNumberPlaceholder() {
         // Given
         RegistrationFormSettings formSettings = new RegistrationFormSettings();
@@ -155,6 +160,8 @@ public class RegistrationFormSettingsInstrumentationTest extends Instrumentation
             Assert.fail("Generated JSON was invalid: " + exception.getMessage());
         }
     }
+
+    @Test
     public void testCustomCardNumberPlaceholder() {
         // Given
         String customHint = "Card number";
@@ -174,6 +181,7 @@ public class RegistrationFormSettingsInstrumentationTest extends Instrumentation
         }
     }
 
+    @Test
     public void testDefaultCardExpiryPlaceholder() {
         // Given
         RegistrationFormSettings formSettings = new RegistrationFormSettings();
@@ -192,6 +200,7 @@ public class RegistrationFormSettingsInstrumentationTest extends Instrumentation
         }
     }
 
+    @Test
     public void testCustomCardExpiryPlaceholder() {
         // Given
         String customHint = "Card expiry";
@@ -211,6 +220,7 @@ public class RegistrationFormSettingsInstrumentationTest extends Instrumentation
         }
     }
 
+    @Test
     public void testDefaultSecurityCodePlaceholder() {
         // Given
         RegistrationFormSettings formSettings = new RegistrationFormSettings();
@@ -229,6 +239,7 @@ public class RegistrationFormSettingsInstrumentationTest extends Instrumentation
         }
     }
 
+    @Test
     public void testCustomSecurityCodePlaceholder() {
         // Given
         String customHint = "Security code";

@@ -22,22 +22,19 @@
 
 package com.bambora.nativepayment.models;
 
-import android.test.InstrumentationTestCase;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
+import org.junit.Test;
 
-/**
- * TODO
- */
-public class PaymentSettingsInstrumentationTest extends InstrumentationTestCase {
+public class PaymentSettingsInstrumentationTest {
 
     private static final String KEY_AMOUNT = "amount";
     private static final String KEY_CURRENCY = "currency";
     private static final String KEY_COMMENT = "comment";
     private static final String KEY_TOKEN = "token";
 
+    @Test
     public void testGetSerializedWithNoParameters() throws JSONException {
         // Given
         PaymentSettings paymentSettings = new PaymentSettings();
@@ -51,6 +48,7 @@ public class PaymentSettingsInstrumentationTest extends InstrumentationTestCase 
         Assert.assertEquals(0, jsonObject.length());
     }
 
+    @Test
     public void testGetSerializedWithValidParameters() throws JSONException {
         // Given
         PaymentSettings paymentSettings = new PaymentSettings();
@@ -74,6 +72,7 @@ public class PaymentSettingsInstrumentationTest extends InstrumentationTestCase 
         Assert.assertEquals(token, jsonObject.getString(KEY_TOKEN));
     }
 
+    @Test
     public void testGetSerializedWithMissingParameters() throws JSONException {
         // Given
         PaymentSettings paymentSettings = new PaymentSettings();

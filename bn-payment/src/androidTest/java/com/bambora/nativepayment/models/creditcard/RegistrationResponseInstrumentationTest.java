@@ -22,20 +22,20 @@
 
 package com.bambora.nativepayment.models.creditcard;
 
-import android.test.InstrumentationTestCase;
-
 import com.bambora.nativepayment.json.JsonContainer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Test;
 
-/**
- * TODO
- */
-public class RegistrationResponseInstrumentationTest extends InstrumentationTestCase {
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNull;
+
+public class RegistrationResponseInstrumentationTest {
 
     private static final String KEY_SESSION_URL = "session_url";
 
+    @Test
     public void testFromJsonWithNoParameters() throws JSONException {
         // Given
         JsonContainer responseJson = new JsonContainer("{}");
@@ -48,6 +48,7 @@ public class RegistrationResponseInstrumentationTest extends InstrumentationTest
         assertNull(registrationResponse.sessionUrl);
     }
 
+    @Test
     public void testFromJsonWithValidUrl() throws JSONException {
         // Given
         String url = "http://a.valid.url";

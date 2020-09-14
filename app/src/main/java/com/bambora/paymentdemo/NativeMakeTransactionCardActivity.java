@@ -25,8 +25,8 @@ package com.bambora.paymentdemo;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -36,7 +36,6 @@ import java.util.Map;
 import com.bambora.nativepayment.interfaces.ITransactionExtListener;
 import com.bambora.nativepayment.logging.BNLog;
 import com.bambora.nativepayment.managers.CreditCardManager;
-import com.bambora.nativepayment.models.CardRegistrationFormGuiSetting;
 import com.bambora.nativepayment.models.PaymentSettings;
 import com.bambora.nativepayment.models.PaymentType;
 import com.bambora.nativepayment.models.SubmitPaymentCardFormGuiSetting;
@@ -66,7 +65,6 @@ public class NativeMakeTransactionCardActivity extends AppCompatActivity impleme
         paymentSettings.amount = (int)(storage.getPayAmount()*100);
         paymentSettings.comment = "This is a pay by card transaction test.";
         paymentSettings.currency = "AUD";
-        paymentSettings.cvcCode =  "123";
 
         // determine if this is for payment or preAuth
         Intent prevIntent = getIntent(); // gets the previously created intent

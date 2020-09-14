@@ -23,10 +23,9 @@
 package com.bambora.paymentdemo;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.bambora.nativepayment.interfaces.ICardRegistrationCallback;
@@ -35,9 +34,6 @@ import com.bambora.nativepayment.models.creditcard.CreditCard;
 import com.bambora.nativepayment.network.RequestError;
 import com.bambora.nativepayment.widget.CardRegistrationFormLayout;
 
-/**
- * TODO
- */
 public class NativeCardRegistrationActivity extends AppCompatActivity implements ICardRegistrationCallback {
     private DeviceStorage storage;
     final Context context = this;

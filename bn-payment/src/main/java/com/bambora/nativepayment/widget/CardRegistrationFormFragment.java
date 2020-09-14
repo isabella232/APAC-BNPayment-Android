@@ -2,10 +2,9 @@ package com.bambora.nativepayment.widget;
 
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -171,12 +170,10 @@ public class CardRegistrationFormFragment extends Fragment implements CardFormEd
             {
                 registrationButton.setText(registrationGuiSetting.RegisterButtonText);
             }
-            //Todo: More validation
-            if(registrationGuiSetting.RegisterButtonColor!=null && registrationGuiSetting.RegisterButtonColor.trim().length()==7)
-            {
-                int colorValue = Color.parseColor(registrationGuiSetting.RegisterButtonColor);
-                registrationButton.setBackgroundColor(colorValue);
-            }
+
+            int colorValue = CompatHelper.getCustomizedColor(getActivity(),registrationGuiSetting.RegisterButtonColor,"Register Button Color is invalid!");
+            registrationButton.setAlpha((float)0.5);
+            registrationButton.setBackgroundColor(colorValue);
         }
     }
 
@@ -231,11 +228,8 @@ public class CardRegistrationFormFragment extends Fragment implements CardFormEd
     {
         if(progressBar!=null)
         {
-            if(registrationGuiSetting.LoadingBarColor!=null && registrationGuiSetting.LoadingBarColor.trim().length()==7)
-            {
-                int colorValue = Color.parseColor(registrationGuiSetting.LoadingBarColor);
-                progressBar.getIndeterminateDrawable().setColorFilter(colorValue, PorterDuff.Mode.MULTIPLY);
-            }
+            int colorValue = CompatHelper.getCustomizedColor(getActivity(),registrationGuiSetting.LoadingBarColor,"Loading Bar Color is invalid!");
+            progressBar.getIndeterminateDrawable().setColorFilter(colorValue, PorterDuff.Mode.MULTIPLY);
         }
     }
 
@@ -243,14 +237,7 @@ public class CardRegistrationFormFragment extends Fragment implements CardFormEd
     {
         if(registrationGuiSetting.CardIOEnable==null || registrationGuiSetting.CardIOEnable)
         {
-            if(registrationGuiSetting.CardIOColorText!=null && registrationGuiSetting.CardIOColorText.trim().length()==7)
-            {
-                cardIOColor = Color.parseColor(registrationGuiSetting.CardIOColorText);
-            }
-            else
-            {
-                cardIOColor = getResources().getColor(R.color.bn_purple);
-            }
+            cardIOColor=CompatHelper.getCustomizedColor(getActivity(),registrationGuiSetting.CardIOColorText,"CardIO Frame Color is invalid!");
         }
         else
         {
@@ -266,17 +253,28 @@ public class CardRegistrationFormFragment extends Fragment implements CardFormEd
                 break;
             }
         }
+
+        if(enabled)
+        {
+            registrationButton.setAlpha(1);
+        }
+        else
+        {
+            registrationButton.setAlpha((float)0.5);
+        }
         registrationButton.setEnabled(enabled);
     }
 
 
     private void startLoadingUI(){
+        registrationButton.setAlpha((float)0.5);
         registrationButton.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
 
     }
 
     private void stopLoadingUI(){
+        registrationButton.setAlpha(1);
         registrationButton.setEnabled(true);
         updateButtonState();
         progressBar.setVisibility(View.INVISIBLE);

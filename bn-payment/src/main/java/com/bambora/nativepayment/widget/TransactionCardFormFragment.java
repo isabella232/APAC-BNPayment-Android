@@ -8,8 +8,8 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.support.annotation.Nullable;
-import android.util.Log;
+import androidx.annotation.Nullable;
+
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -329,12 +329,10 @@ public class TransactionCardFormFragment extends Fragment implements CardFormEdi
             {
                 registrationButton.setText(submitPaymentCardFormGuiSetting.PayByCardButtonText);
             }
-            //Todo: More validation
-            if(submitPaymentCardFormGuiSetting.PayByCardButtonColor!=null && submitPaymentCardFormGuiSetting.PayByCardButtonColor.trim().length()==7)
-            {
-                int colorValue = Color.parseColor(submitPaymentCardFormGuiSetting.PayByCardButtonColor);
-                registrationButton.setBackgroundColor(colorValue);
-            }
+
+            int colorValue = CompatHelper.getCustomizedColor(getActivity(),submitPaymentCardFormGuiSetting.PayByCardButtonColor,"Submit Button is invalid!");
+            registrationButton.setAlpha((float)0.5);
+            registrationButton.setBackgroundColor(colorValue);
         }
     }
 
@@ -344,11 +342,8 @@ public class TransactionCardFormFragment extends Fragment implements CardFormEdi
         //Register Button Text
         if(progressBar!=null)
         {
-            if(submitPaymentCardFormGuiSetting.PayLoadingBarColor!=null && submitPaymentCardFormGuiSetting.PayLoadingBarColor.trim().length()==7)
-            {
-                int colorValue = Color.parseColor(submitPaymentCardFormGuiSetting.PayLoadingBarColor);
-                progressBar.getIndeterminateDrawable().setColorFilter(colorValue, PorterDuff.Mode.MULTIPLY);
-            }
+            int colorValue = CompatHelper.getCustomizedColor(getActivity(),submitPaymentCardFormGuiSetting.PayLoadingBarColor,"Loading Bar Color is invalid!");
+            progressBar.getIndeterminateDrawable().setColorFilter(colorValue, PorterDuff.Mode.MULTIPLY);
         }
     }
 
@@ -359,11 +354,7 @@ public class TransactionCardFormFragment extends Fragment implements CardFormEdi
         //Register Button Text
         if(isSaveCardButton!=null)
         {
-            if(submitPaymentCardFormGuiSetting.SwitchButtonColor!=null && submitPaymentCardFormGuiSetting.SwitchButtonColor.trim().length()==7)
-            {
-                int colorValue = Color.parseColor(submitPaymentCardFormGuiSetting.SwitchButtonColor);
-                isSaveCardButton.setBackgroundColor(colorValue);
-            }
+            isSaveCardButton.setBackgroundColor(CompatHelper.getCustomizedColor(getActivity(),submitPaymentCardFormGuiSetting.SwitchButtonColor,"Save Card Button Color is invalid!"));
         }
     }
 
@@ -418,14 +409,7 @@ public class TransactionCardFormFragment extends Fragment implements CardFormEdi
     {
         if(submitPaymentCardFormGuiSetting.CardIOEnable==null || submitPaymentCardFormGuiSetting.CardIOEnable)
         {
-            if(submitPaymentCardFormGuiSetting.CardIOColorText!=null && submitPaymentCardFormGuiSetting.CardIOColorText.trim().length()==7)
-            {
-                cardIOColor = Color.parseColor(submitPaymentCardFormGuiSetting.CardIOColorText);
-            }
-            else
-            {
-                cardIOColor = getResources().getColor(R.color.bn_purple);
-            }
+            cardIOColor=CompatHelper.getCustomizedColor(getActivity(),submitPaymentCardFormGuiSetting.CardIOColorText,"CardIO Frame Color is invalid!");
         }
         else
         {
@@ -441,17 +425,27 @@ public class TransactionCardFormFragment extends Fragment implements CardFormEdi
                 break;
             }
         }
+        if(enabled)
+        {
+            registrationButton.setAlpha(1);
+        }
+        else
+        {
+            registrationButton.setAlpha((float)0.5);
+        }
         registrationButton.setEnabled(enabled);
     }
 
 
     private void startLoadingUI(){
+        registrationButton.setAlpha((float)0.5);
         registrationButton.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
 
     }
 
     private void stopLoadingUI(){
+        registrationButton.setAlpha(1);
         registrationButton.setEnabled(true);
         updateButtonState();
         progressBar.setVisibility(View.INVISIBLE);

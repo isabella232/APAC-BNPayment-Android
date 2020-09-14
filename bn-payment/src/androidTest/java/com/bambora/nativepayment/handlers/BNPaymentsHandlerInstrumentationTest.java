@@ -1,21 +1,23 @@
 package com.bambora.nativepayment.handlers;
 
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.bambora.nativepayment.base.MockitoInstrumentationTestCase;
 import com.bambora.nativepayment.managers.CertificateManager;
 import com.bambora.nativepayment.network.HttpClient;
 import com.bambora.nativepayment.network.Request;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
 @RunWith(AndroidJUnit4.class)
 public class BNPaymentsHandlerInstrumentationTest extends MockitoInstrumentationTestCase {
 
-    @Override
+    @Before
     public void setUp() {
         super.setUp();
         BNPaymentHandler bnPaymentHandler = BNPaymentHandler.getInstance();
@@ -23,9 +25,10 @@ public class BNPaymentsHandlerInstrumentationTest extends MockitoInstrumentation
         bnPaymentHandler.setCertificateManager(Mockito.mock(CertificateManager.class));
     }
 
+    @Test
     public void testApiToken() {
         BNPaymentHandler.BNPaymentBuilder bnPaymentBuilder = new BNPaymentHandler.BNPaymentBuilder(
-                getInstrumentation().getContext(), "token");
+                InstrumentationRegistry.getInstrumentation().getContext(), "token");
 
         BNPaymentHandler.setupBNPayments(bnPaymentBuilder);
 
@@ -36,10 +39,11 @@ public class BNPaymentsHandlerInstrumentationTest extends MockitoInstrumentation
     /**
      * Verify that Api-Token (but not Merchant-Account) header is set
      */
+    @Test
     public void testApiTokenHeader() {
         // Given
         BNPaymentHandler.BNPaymentBuilder bnPaymentBuilder = new BNPaymentHandler.BNPaymentBuilder(
-                getInstrumentation().getContext(), "token");
+                InstrumentationRegistry.getInstrumentation().getContext(), "token");
 
         BNPaymentHandler.setupBNPayments(bnPaymentBuilder);
 
@@ -60,10 +64,11 @@ public class BNPaymentsHandlerInstrumentationTest extends MockitoInstrumentation
     /**
      * Verify that merchant account can be set on {@link com.bambora.nativepayment.handlers.BNPaymentHandler}
      */
+    @Test
     public void testMerchantAccount() {
         // Given
         BNPaymentHandler.BNPaymentBuilder bnPaymentBuilder = new BNPaymentHandler.BNPaymentBuilder(
-                getInstrumentation().getContext());
+                InstrumentationRegistry.getInstrumentation().getContext());
         bnPaymentBuilder.merchantAccount("merchant");
 
         // When
@@ -78,10 +83,11 @@ public class BNPaymentsHandlerInstrumentationTest extends MockitoInstrumentation
     /**
      * Verify that Merchant-Account (but not Api-Token) header is set
      */
+    @Test
     public void testMerchantAccountHeader() {
         // Given
         BNPaymentHandler.BNPaymentBuilder bnPaymentBuilder = new BNPaymentHandler.BNPaymentBuilder(
-                getInstrumentation().getContext());
+                InstrumentationRegistry.getInstrumentation().getContext());
         bnPaymentBuilder.merchantAccount("merchant");
 
         BNPaymentHandler.setupBNPayments(bnPaymentBuilder);

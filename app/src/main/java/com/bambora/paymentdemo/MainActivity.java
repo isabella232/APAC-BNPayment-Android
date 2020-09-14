@@ -27,8 +27,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,7 +38,6 @@ import android.widget.RelativeLayout;
 
 import com.bambora.nativepayment.handlers.BNPaymentHandler;
 import com.bambora.nativepayment.handlers.BNPaymentHandler.BNPaymentBuilder;
-import com.bambora.nativepayment.interfaces.ICardRegistrationCallback;
 import com.bambora.nativepayment.interfaces.ITransactionExtListener;
 import com.bambora.nativepayment.logging.BNLog;
 import com.bambora.nativepayment.managers.CreditCardManager;
@@ -54,8 +53,6 @@ import org.json.JSONObject;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -235,7 +232,6 @@ public class MainActivity extends AppCompatActivity {
         paymentSettings.comment = "This is a test transaction by token.";
         paymentSettings.creditCardToken = creditCard.getCreditCardToken();
         paymentSettings.currency = "AUD";
-        paymentSettings.cvcCode =  "123";
         JSONObject paymentJsonData = getJsonPayData();
         Log.i(getClass().getSimpleName(), paymentJsonData.toString());
         paymentSettings.paymentJsonData = paymentJsonData;
@@ -268,7 +264,6 @@ public class MainActivity extends AppCompatActivity {
         paymentSettings.comment = "This is a test token PreAuth.";
         paymentSettings.creditCardToken = creditCard.getCreditCardToken();
         paymentSettings.currency = "AUD";
-        paymentSettings.cvcCode =  "123";
         JSONObject paymentJsonData = getJsonPayData();
         Log.i(getClass().getSimpleName(), paymentJsonData.toString());
         paymentSettings.paymentJsonData = paymentJsonData;

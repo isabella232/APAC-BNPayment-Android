@@ -22,17 +22,18 @@
 
 package com.bambora.nativepayment.models.creditcard;
 
-import android.test.InstrumentationTestCase;
-
 import com.bambora.nativepayment.json.JsonContainer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Test;
 
-/**
- * TODO
- */
-public class CreditCardTest extends InstrumentationTestCase {
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertNull;
+import static junit.framework.TestCase.assertTrue;
+
+public class CreditCardTest {
 
     private static final String KEY_RECURRING_PAYMENT_ID = "recurringPaymentID";
     private static final String KEY_CARD_NUMBER = "cardNumber";
@@ -40,6 +41,7 @@ public class CreditCardTest extends InstrumentationTestCase {
     private static final String KEY_EXPIRY_MONTH = "expiryMonth";
     private static final String KEY_EXPIRY_YEAR = "expiryYear";
 
+    @Test
     public void testConstructorWithParameterInput() {
         // Given
         String truncatedCardNumber = "1111XXXXXXXX2222";
@@ -62,6 +64,7 @@ public class CreditCardTest extends InstrumentationTestCase {
         assertEquals(creditCardToken, creditCard.getCreditCardToken());
     }
 
+    @Test
     public void testConstructorWithRegistrationResult() throws JSONException {
         // Given
         String truncatedCardNumber = "1111XXXXXXXX2222";
@@ -91,6 +94,7 @@ public class CreditCardTest extends InstrumentationTestCase {
         assertEquals(creditCardToken, creditCard.getCreditCardToken());
     }
 
+    @Test
     public void testFromJsonWithEmptyParameters() throws JSONException {
         // Given
         JsonContainer emptyJson = new JsonContainer("{}");
@@ -108,6 +112,7 @@ public class CreditCardTest extends InstrumentationTestCase {
         assertNull(creditCard.getCreditCardToken());
     }
 
+    @Test
     public void testFromJsonWithCardNumber() throws JSONException {
         // Given
         String truncatedCardNumber = "1111XXXXXXXX2222";
@@ -122,6 +127,7 @@ public class CreditCardTest extends InstrumentationTestCase {
         assertEquals(truncatedCardNumber, creditCard.getTruncatedCardNumber());
     }
 
+    @Test
     public void testFromJsonWithExpiryDate() throws JSONException {
         // Given
         Integer expiryMonth = 8;
@@ -139,6 +145,7 @@ public class CreditCardTest extends InstrumentationTestCase {
         assertEquals(expiryYear, creditCard.getExpiryYear());
     }
 
+    @Test
     public void testFromJsonWithPaymentType() throws JSONException {
         // Given
         String paymentType = "a-payment-type";
@@ -153,6 +160,7 @@ public class CreditCardTest extends InstrumentationTestCase {
         assertEquals(paymentType, creditCard.getPaymentType());
     }
 
+    @Test
     public void testFromJsonWithCardToken() throws JSONException {
         // Given
         String cardToken = "a-card-token";
@@ -167,6 +175,7 @@ public class CreditCardTest extends InstrumentationTestCase {
         assertEquals(cardToken, creditCard.getCreditCardToken());
     }
 
+    @Test
     public void testIsEqualToShouldBeTrue() {
         // Given
         CreditCard creditCard1 = new CreditCard("1111xxxxxxxx2222", 8, 22, "PaymentType", "TransactionId", "123456");
@@ -179,6 +188,7 @@ public class CreditCardTest extends InstrumentationTestCase {
         assertTrue(isEqual);
     }
 
+    @Test
     public void testIsEqualToShouldBeFalse() {
         // Given
         CreditCard creditCard1 = new CreditCard("1111xxxxxxxx2222", 8, 22, "PaymentType", "TransactionId", "123456");

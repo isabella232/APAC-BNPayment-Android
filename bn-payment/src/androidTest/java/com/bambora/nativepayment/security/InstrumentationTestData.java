@@ -13,9 +13,6 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * TODO
- */
 public class InstrumentationTestData {
 
     private static final String FILE_TEST_PRIVATE_KEY = "TestPKCS.p12";

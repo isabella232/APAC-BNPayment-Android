@@ -26,9 +26,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * TODO
- */
 public class JsonUtils {
 
     public static String getStringIfExists(JSONObject jsonObject, String key) throws JSONException {

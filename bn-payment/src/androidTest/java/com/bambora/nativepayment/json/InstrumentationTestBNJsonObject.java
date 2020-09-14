@@ -1,20 +1,18 @@
 package com.bambora.nativepayment.json;
 
-import android.support.test.runner.AndroidJUnit4;
-import android.test.InstrumentationTestCase;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.json.JSONException;
 import org.junit.Assert;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Date;
 
-/**
- * TODO
- */
 @RunWith(AndroidJUnit4.class)
-public class InstrumentationTestBNJsonObject extends InstrumentationTestCase {
+public class InstrumentationTestBNJsonObject {
 
+    @Test
     public void testOptDateWithValidDate() throws JSONException {
         long expectedTime = 1463486400000L;
         String dateKey = "date";
@@ -27,6 +25,7 @@ public class InstrumentationTestBNJsonObject extends InstrumentationTestCase {
         Assert.assertEquals(expectedTime, date.getTime());
     }
 
+    @Test
     public void testOptDateWithNullValue() throws JSONException {
         String dateKey = "date";
         String dateValue = "null";
@@ -37,6 +36,7 @@ public class InstrumentationTestBNJsonObject extends InstrumentationTestCase {
         Assert.assertNull(date);
     }
 
+    @Test
     public void testOptDateOnEmptyJson() throws JSONException {
         BNJsonObject jsonObject = new BNJsonObject("{}");
         Date date = jsonObject.optDate("invalidKey");

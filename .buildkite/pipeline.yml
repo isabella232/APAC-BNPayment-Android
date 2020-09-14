@@ -1,0 +1,81 @@
+sdk: &sdk
+  MODULE: 'sdk'
+  PROJECT_NAME: 'bnsdkdroid'
+  COMMIT_TAG: 'AUTO'
+  BUILD_TYPE: 'release'
+  BRANCH: 'develop'
+  
+test_app: &test_app
+  <<: *sdk
+  MODULE: 'app'
+  TEST_TASK: "test connectedAndroidTest"
+  FIREBASE_ID: '1:737983477354:android:94b14bcc0f94a8c1ca3c13'
+  
+steps:
+  - label: 'Install fastlane plugins'
+    key: 'fastlane_plugins'
+    command: "source ~/.bashrc && fastlane install_plugins"
+    agents:
+      android: 'build'
+
+#   TODO: Linting is currently disabled until the clients approve resolving the current issues/warnings
+#  - label: 'Check lint'
+#    key: 'check_lint'
+#    depends_on: fastlane_plugins
+#    branches: "!master"
+#    command: "source ~/.bashrc && bundle exec fastlane check_lint"
+#    env:
+#      <<: *default
+#    agents:
+#      android: 'build'
+
+  - label: 'Test App'
+    key: 'test_main'
+    depends_on: fastlane_plugins
+    branches: "develop"
+    command: "source ~/.bashrc && bundle exec fastlane unit_test"
+    env:
+        <<: *test_app
+    agents:
+      android: 'build'
+
+  - label: ':hammer: Upload Staging to Firebase'
+    key: 'upload_to_firebase'
+    depends_on: fastlane_plugins
+    branches: 'master'
+    command: "source ~/.bashrc && bundle exec fastlane build_and_distribute"
+    env:
+      <<: *test_app
+    agents:
+      android: 'firebase'
+
+  - block: 'Release'
+    key: 'release'
+  
+  - label: 'Sync to Github'
+    key: 'github_sync'
+    depends_on:
+      - 'upload_to_firebase'
+      - 'release'
+    branches: 'master'
+    commands: 'fastlane sync_to_github'
+    env:
+      REPO_NAME: 'APAC-BNPayment-Android'
+      REPO: 'git@github.com:bambora/APAC-BNPayment-Android.git'
+      DESTINATION_PATH: '~/.buildkite/APAC-BNPayment-Android/'
+      SOURCE_PATH: '../'
+      BRANCH: 'master'
+    agents:
+      android: 'firebase'
+
+#   TODO: Need to confirm how to handle the SDK versionName
+#  - label: 'Bump SDK Version'
+#    depends_on:
+#      - 'github_sync'
+#      - 'release'
+#    branches: 'master'
+#    commands: 'fastlane bump'
+#    env:
+#      <<: *sdk
+#    agents:
+#      ios: 'testflight'

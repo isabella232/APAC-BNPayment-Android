@@ -346,6 +346,7 @@ public class BNPaymentHandler {
                             cardObject.put("cardNumber", params.encryptedCard.cardNumber);
                             cardObject.put("expiryMonth", params.encryptedCard.expiryMonth);
                             cardObject.put("expiryYear", params.encryptedCard.expiryYear);
+                            cardObject.put("cvcCode", params.encryptedCard.securityCode);
                             cardObject.put("sessionKey", encryptedSessionKeyObj.sessionKey);
                             cardObject.put("isTokenRequested", requestToken);
                             paymentSettings.cardPaymentJsonData = cardObject;

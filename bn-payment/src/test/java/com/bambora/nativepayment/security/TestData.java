@@ -11,9 +11,6 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
-/**
- * TODO
- */
 public class TestData {
 
     private static final String KEY_STORE_TYPE =        "PKCS12";

@@ -197,7 +197,6 @@ public class RegistrationParams implements IJsonRequest {
     }
 
     /**
-     * TODO
      * Encrypts the given session key with the public keys of each PSP.
      * <p>Loads encryption certificates for each PSP from disk and uses their public keys to encrypt
      * the session key. The encrypted values are then added to a list together with the certificate

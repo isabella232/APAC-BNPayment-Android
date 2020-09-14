@@ -13,8 +13,8 @@ public enum SubmitPaymentCardFormGuiSettingEnum {
     SwitchButtonColor("PayByCardSwitchButtonColor"),
     PayByCardButtonColor ("PayByCardFormRegisterButtonColor"),
     PayLoadingBarColor ("PayLoadingBarColor"),
-    CardIOColorText ("CardIOColorText"),
-    CardIOEnable ("CardIOColorEnable");
+    CardIOColorText ("PayCardIOColorText"),
+    CardIOEnable ("PayCardIOColorEnable");
     private final String name;
 
     SubmitPaymentCardFormGuiSettingEnum(String s) {

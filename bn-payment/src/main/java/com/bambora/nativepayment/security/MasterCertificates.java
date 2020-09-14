@@ -27,10 +27,7 @@ import com.bambora.nativepayment.utils.CertificateUtils;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.List;
-
-/**
- * TODO
- */
+// An expired certificate, ignore this class
 public class MasterCertificates {
 
     private static final String[] MASTER_CERTIFICATES = {

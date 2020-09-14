@@ -24,6 +24,8 @@ package com.bambora.nativepayment.models.creditcard;
 
 import android.content.Context;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.bambora.nativepayment.base.MockitoInstrumentationTestCase;
 import com.bambora.nativepayment.interfaces.ICertificateLoadCallback;
 import com.bambora.nativepayment.managers.CertificateManager;
@@ -34,6 +36,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -59,7 +64,7 @@ public class RegistrationParamsInstrumentationTest extends MockitoInstrumentatio
 
     private CertificateManager certificateManager;
 
-    @Override
+    @Before
     public void setUp() {
         super.setUp();
         certificateManager = mock(CertificateManager.class);
@@ -67,6 +72,7 @@ public class RegistrationParamsInstrumentationTest extends MockitoInstrumentatio
         this.context = Mockito.mock(Context.class);
     }
 
+    @Test
     public void testWithNullParams() {
         // Given
         registrationParams.setParametersAndEncrypt(this.context, null, null, null, null, null);
@@ -78,6 +84,7 @@ public class RegistrationParamsInstrumentationTest extends MockitoInstrumentatio
         Assert.assertEquals("{}", json);
     }
 
+    @Test
     public void testWithValidParameters() throws JSONException {
         // Given
         String cardNumber = "1111 2222 3333 4444";

@@ -25,9 +25,6 @@ package com.bambora.nativepayment.interfaces;
 import com.bambora.nativepayment.models.creditcard.CreditCard;
 import com.bambora.nativepayment.network.RequestError;
 
-/**
- * TODO
- */
 public interface ICardRegistrationCallback {
     void onRegistrationSuccess(CreditCard creditCard);
     void onRegistrationError(RequestError error);

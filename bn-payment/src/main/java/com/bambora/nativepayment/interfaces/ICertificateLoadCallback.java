@@ -26,9 +26,6 @@ import com.bambora.nativepayment.security.EncryptionCertificate;
 
 import java.util.List;
 
-/**
- * TODO
- */
 public interface ICertificateLoadCallback {
     void onCertificatesLoaded(List<EncryptionCertificate> certificates);
     void onError();
